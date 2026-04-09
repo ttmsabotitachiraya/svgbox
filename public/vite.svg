@@ -1,0 +1,72 @@
+<svg
+    width="200"
+    height="200"
+    viewBox="0 0 200 200"
+    xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient id="topFace" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#E9ECEF" />
+    </linearGradient>
+
+    <linearGradient id="leftFace" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4F4F4F" />
+      <stop offset="100%" stop-color="#3D3D3D" />
+    </linearGradient>
+
+    <linearGradient id="rightFace" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#26D6D1" />
+      <stop offset="100%" stop-color="#00CEC9" />
+    </linearGradient>
+  </defs>
+
+  <path
+        d="M100 0 L200 50 L100 100 L0 50 Z"
+        fill="url(#topFace)"
+        stroke="#DEE2E6"
+        stroke-width="0.5"
+    />
+
+  <path d="M0 50 L100 100 L100 200 L0 150 Z" fill="url(#leftFace)" />
+
+  <path d="M100 100 L200 50 L200 150 L100 200 Z" fill="url(#rightFace)" />
+
+  <g transform="translate(100, 50) scale(1.667, 0.833) rotate(45)">
+    <text
+            x="0"
+            y="25"
+            text-anchor="middle"
+            font-family="Arial, sans-serif"
+            font-weight="bold"
+            font-size="80"
+            fill="#212529"
+        >S</text>
+  </g>
+
+  <g transform="translate(50, 137.5) skewY(26.5)">
+    <text
+            x="0"
+            y="0"
+            text-anchor="middle"
+            font-family="Arial, sans-serif"
+            font-weight="bold"
+            font-size="60"
+            fill="#FFFFFF"
+            fill-opacity="0.95"
+        >V</text>
+  </g>
+
+  <g transform="translate(150, 137.5) skewY(-26.5)">
+    <text
+            x="0"
+            y="0"
+            text-anchor="middle"
+            font-family="Arial, sans-serif"
+            font-weight="bold"
+            font-size="60"
+            fill="#FFFFFF"
+            fill-opacity="0.95"
+        >G</text>
+  </g>
+</svg>

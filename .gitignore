@@ -1,0 +1,46 @@
+# Minimal .gitignore for SVGBox
+# Purpose: only ignore generated artifacts, secrets, and backups.
+# Keep SQL schema/migration files (e.g. supabase_setup.sql) and Markdown tracked.
+
+# Node deps / build output
+node_modules/
+dist/
+build/
+
+# Environment / secrets
+.env
+.env.*.local
+
+# OS / editor
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# DB dumps / compressed SQL backups / archives
+*.dump
+*.sql.gz
+*.bak
+*.tar.gz
+
+# Local DB files / binaries
+*.sqlite
+*.db
+
+# Private keys / certs
+*.pem
+*.key
+*.crt
+.pgp-keys/
+
+# Cloud SDK caches / credentials
+.aws/
+.gcloud/
+
+# Local caches
+.cache/
+.vite/
+
+# End - Intentionally minimal so supabase_setup.sql and .md files remain tracked
