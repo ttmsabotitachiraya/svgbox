@@ -22,7 +22,7 @@
                     </p>
                 </div>
                 <RouterLink
-                    to="/dashboard"
+                    to="/collection"
                     class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-border text-sm font-prompt font-medium text-secondary hover:bg-soft transition-all duration-200 w-fit"
                 >
                     <LayoutDashboard :size="16" />

@@ -117,7 +117,7 @@
                     <!-- Authenticated -->
                     <template v-if="user">
                         <RouterLink
-                            to="/dashboard"
+                            :to="{ name: 'collection' }"
                             class="flex items-center gap-1.5 px-3 py-2 rounded-2xl text-sm font-prompt font-medium text-primary hover:bg-soft transition-all duration-200"
                         >
                             <LayoutDashboard :size="16" />
@@ -292,7 +292,7 @@ const { user, logout, isAdmin } = useAuth();
 const route = useRoute();
 const currentPage = computed(() => {
     if (route.path.startsWith("/admin")) return "Admin";
-    if (route.path.startsWith("/dashboard")) return "Collection";
+    if (route.path.startsWith("/collection")) return "Collection";
     if (route.path.startsWith("/profile")) return "Profile";
     if (route.path.startsWith("/settings")) return "Settings";
     return "";

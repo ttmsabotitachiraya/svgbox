@@ -5,7 +5,7 @@
             <div class="mb-8">
                 <div class="flex items-center gap-3 mb-1">
                     <RouterLink
-                        to="/dashboard"
+                        to="/collection"
                         class="text-textsecondary hover:text-primary transition-colors duration-150"
                     >
                         <ArrowLeft :size="18" />

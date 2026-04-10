@@ -437,6 +437,19 @@ const clearFilters = () => {
 };
 
 const loadAssets = async (restorePosition = false) => {
+    // Ensure the auth session is refreshed before attempting to load
+    // user-specific assets. This helps when the page is reloaded and the
+    // in-memory `user` may not yet be populated even though a session
+    // exists in storage.
+    if (!user.value) {
+        try {
+            await refreshSession();
+        } catch {
+            // Ignore refresh errors here; fetchByUser will simply not run
+            // if the user is not available.
+        }
+    }
+
     if (user.value) {
         await fetchByUser(user.value.id);
         if (restorePosition) restoreScroll();
@@ -492,6 +505,15 @@ const handleVisibilityChange = async () => {
 };
 
 onMounted(async () => {
+    // Refresh the auth session first so that `user.value` is populated
+    // and the Supabase client holds a fresh JWT before fetching assets.
+    try {
+        await refreshSession();
+    } catch {
+        // If refresh times out or fails, we still attempt to load assets.
+        // The fallback in loadAssets will handle the absence of user.
+    }
+
     await loadAssets(true);
     document.addEventListener("visibilitychange", handleVisibilityChange);
 });

@@ -304,7 +304,7 @@ const handleLogin = async () => {
 
     try {
         await login(email.value.trim(), password.value);
-        router.push({ name: "dashboard" });
+        router.push({ name: "collection" });
     } catch (e: unknown) {
         fieldError.value = true;
         if (e instanceof Error) {

@@ -26,9 +26,9 @@ const routes = [
     name: "register",
   },
   {
-    path: "/dashboard",
+    path: "/collection",
     component: () => import("../pages/DashboardPage.vue"),
-    name: "dashboard",
+    name: "collection",
     meta: { requiresAuth: true },
   },
   {
@@ -123,7 +123,7 @@ router.beforeEach(async (to) => {
         .single();
 
       if (profile?.role !== "admin") {
-        return { name: "dashboard" };
+        return { name: "collection" };
       }
     }
   }
