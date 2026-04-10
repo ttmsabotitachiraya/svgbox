@@ -157,10 +157,10 @@
                         <h1
                             class="text-2xl font-semibold text-textprimary font-prompt"
                         >
-                            สมัครสมาชิก
+                            {{ t("auth.register.title") }}
                         </h1>
                         <p class="text-sm text-textsecondary font-prompt mt-1">
-                            สร้างบัญชีเพื่อเริ่มใช้งาน SVGBox
+                            {{ t("auth.register.subtitle") }}
                         </p>
                     </div>
 
@@ -170,7 +170,8 @@
                             <label
                                 class="block text-sm font-medium text-textprimary mb-1.5 font-prompt"
                             >
-                                อีเมล <span class="text-red-500">*</span>
+                                {{ t("auth.register.emailLabel") }}
+                                <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
                                 <Mail
@@ -205,7 +206,8 @@
                             <label
                                 class="block text-sm font-medium text-textprimary mb-1.5 font-prompt"
                             >
-                                Username <span class="text-red-500">*</span>
+                                {{ t("auth.register.usernameLabel") }}
+                                <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
                                 <AtSign
@@ -237,7 +239,7 @@
                                 v-else
                                 class="mt-1 text-xs text-textsecondary font-prompt"
                             >
-                                ใช้ได้เฉพาะ a-z, A-Z, 0-9 และ _ (3–30 ตัวอักษร)
+                                {{ t("auth.register.usernameNote") }}
                             </p>
                         </div>
 
@@ -246,7 +248,8 @@
                             <label
                                 class="block text-sm font-medium text-textprimary mb-1.5 font-prompt"
                             >
-                                รหัสผ่าน <span class="text-red-500">*</span>
+                                {{ t("auth.register.passwordLabel") }}
+                                <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
                                 <Lock
@@ -256,7 +259,9 @@
                                 <input
                                     v-model="password"
                                     :type="showPassword ? 'text' : 'password'"
-                                    placeholder="อย่างน้อย 6 ตัวอักษร"
+                                    :placeholder="
+                                        t('auth.register.passwordPlaceholder')
+                                    "
                                     autocomplete="new-password"
                                     required
                                     class="w-full pl-10 pr-10 py-2.5 bg-bg border rounded-xl text-sm font-prompt text-textprimary placeholder-textsecondary focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all duration-200"
@@ -312,7 +317,7 @@
                             <label
                                 class="block text-sm font-medium text-textprimary mb-1.5 font-prompt"
                             >
-                                ยืนยันรหัสผ่าน
+                                {{ t("auth.register.confirmPasswordLabel") }}
                                 <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
@@ -327,7 +332,11 @@
                                             ? 'text'
                                             : 'password'
                                     "
-                                    placeholder="กรอกรหัสผ่านอีกครั้ง"
+                                    :placeholder="
+                                        t(
+                                            'auth.register.confirmPasswordPlaceholder',
+                                        )
+                                    "
                                     autocomplete="new-password"
                                     required
                                     class="w-full pl-10 pr-10 py-2.5 bg-bg border rounded-xl text-sm font-prompt text-textprimary placeholder-textsecondary focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all duration-200"
@@ -393,15 +402,15 @@
                         <p
                             class="text-xs text-textsecondary font-prompt text-center"
                         >
-                            การสมัครสมาชิกถือว่าคุณยอมรับ
+                            {{ t("auth.register.terms") }}
                             <span
                                 class="text-accent cursor-pointer hover:underline"
-                                >เงื่อนไขการใช้งาน</span
+                                >{{ t("auth.register.termsLink") }}</span
                             >
-                            และ
+                            {{ t("auth.register.and") }}
                             <span
                                 class="text-accent cursor-pointer hover:underline"
-                                >นโยบายความเป็นส่วนตัว</span
+                                >{{ t("auth.register.privacyLink") }}</span
                             >
                         </p>
 
@@ -419,8 +428,8 @@
                             <UserPlus v-else :size="17" />
                             {{
                                 isSubmitting
-                                    ? "กำลังสมัครสมาชิก..."
-                                    : "สมัครสมาชิก"
+                                    ? t("auth.register.submitting")
+                                    : t("auth.register.submitBtn")
                             }}
                         </button>
                     </form>
@@ -433,7 +442,7 @@
                         <div class="relative flex justify-center text-xs">
                             <span
                                 class="bg-surface px-3 text-textsecondary font-prompt"
-                                >มีบัญชีอยู่แล้ว?</span
+                                >{{ t("auth.register.hasAccount") }}</span
                             >
                         </div>
                     </div>
@@ -444,7 +453,7 @@
                         class="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl border border-border text-sm font-prompt font-medium text-primary hover:border-accent hover:text-accent hover:bg-accent/5 transition-all duration-200"
                     >
                         <LogIn :size="16" />
-                        เข้าสู่ระบบ
+                        {{ t("auth.register.loginLink") }}
                     </RouterLink>
                 </div>
             </Transition>
@@ -456,7 +465,7 @@
                     class="inline-flex items-center gap-1.5 text-sm font-prompt text-textsecondary hover:text-primary transition-colors duration-200"
                 >
                     <ArrowLeft :size="14" />
-                    กลับหน้าแรก
+                    {{ t("auth.register.backToHome") }}
                 </RouterLink>
             </div>
         </div>
@@ -466,6 +475,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { RouterLink, useRouter } from "vue-router";
+import { useI18n } from "../composables/useI18n";
 import {
     Mail,
     Lock,
@@ -485,6 +495,7 @@ import { useAuth } from "../composables/useAuth";
 
 const router = useRouter();
 const { register } = useAuth();
+const { t } = useI18n();
 
 const email = ref("");
 const username = ref("");

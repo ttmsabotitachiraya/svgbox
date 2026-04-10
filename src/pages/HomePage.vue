@@ -111,7 +111,7 @@
                 <p
                     class="text-lg text-textsecondary font-prompt font-light max-w-xl mx-auto mb-8"
                 >
-                    คลัง SVG สาธารณะ สวยงาม ใช้ได้ทันที
+                    {{ t("home.subtitle") }}
                 </p>
 
                 <!-- Large Search Bar -->
@@ -123,7 +123,7 @@
                     <input
                         v-model="localSearch"
                         type="text"
-                        placeholder="ค้นหา SVG, ชื่อ, แท็ก..."
+                        :placeholder="t('home.searchPlaceholder')"
                         class="w-full pl-12 pr-5 py-4 bg-surface border border-border rounded-2xl text-base font-prompt text-textprimary placeholder-textsecondary shadow-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-200"
                         @input="onSearch"
                     />
@@ -147,12 +147,13 @@
                     <span class="w-1 h-1 bg-border rounded-full"></span>
                     <span class="flex items-center gap-1.5">
                         <Tag :size="15" class="text-accent" />
-                        {{ uniqueCategories.length }} หมวดหมู่
+                        {{ uniqueCategories.length }}
+                        {{ t("home.stats.categories") }}
                     </span>
                     <span class="w-1 h-1 bg-border rounded-full"></span>
                     <span class="flex items-center gap-1.5">
                         <Globe :size="15" class="text-accent" />
-                        ใช้งานได้ฟรี
+                        {{ t("home.stats.freeToUse") }}
                     </span>
                 </div>
             </div>
@@ -172,7 +173,7 @@
                                 : 'bg-surface border border-border text-secondary hover:border-accent hover:text-accent',
                         ]"
                     >
-                        ทั้งหมด
+                        {{ t("home.filters.all") }}
                     </button>
                     <button
                         v-for="cat in allCategories"
@@ -198,7 +199,7 @@
                     <input
                         v-model="tagFilter"
                         type="text"
-                        placeholder="กรองด้วยแท็ก..."
+                        :placeholder="t('home.filters.tagPlaceholder')"
                         class="w-full pl-9 pr-4 py-2 bg-surface border border-border rounded-xl text-sm font-prompt text-textprimary placeholder-textsecondary focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-200"
                         @input="onTagFilter"
                     />
@@ -210,9 +211,9 @@
                 v-if="selectedCategory || tagFilter || localSearch"
                 class="flex items-center gap-2 mb-6 flex-wrap"
             >
-                <span class="text-xs font-prompt text-textsecondary"
-                    >กำลังกรอง:</span
-                >
+                <span class="text-xs font-prompt text-textsecondary">{{
+                    t("home.filters.filtering")
+                }}</span>
                 <span
                     v-if="localSearch"
                     class="flex items-center gap-1 bg-accent/10 text-accent rounded-full px-3 py-1 text-xs font-prompt"
@@ -247,7 +248,7 @@
                     @click="clearAllFilters"
                     class="text-xs font-prompt text-textsecondary underline hover:text-primary transition-colors"
                 >
-                    ล้างทั้งหมด
+                    {{ t("home.filters.clearAll") }}
                 </button>
             </div>
 
@@ -276,6 +277,7 @@
                     v-for="asset in filteredAssets"
                     :key="asset.id"
                     :asset="asset"
+                    :user-favorited="isFavorited(asset.id)"
                     @favorite="handleFavorite"
                     @download="handleDownload"
                     @copy="handleCopy"
@@ -293,17 +295,17 @@
                     <PackageOpen :size="36" class="text-textsecondary" />
                 </div>
                 <h3 class="text-xl font-semibold text-primary font-prompt mb-2">
-                    ไม่พบ SVG ที่ตรงกัน
+                    {{ t("home.empty.title") }}
                 </h3>
                 <p class="text-sm text-textsecondary font-prompt max-w-xs">
-                    ลองค้นหาด้วยคำอื่น หรือล้างตัวกรองแล้วลองใหม่อีกครั้ง
+                    {{ t("home.empty.description") }}
                 </p>
                 <button
                     v-if="selectedCategory || tagFilter || localSearch"
                     @click="clearAllFilters"
                     class="mt-5 px-5 py-2.5 rounded-2xl bg-accent text-white text-sm font-prompt font-medium hover:bg-accent/90 transition-all duration-200"
                 >
-                    ล้างตัวกรอง
+                    {{ t("home.empty.clearFilters") }}
                 </button>
             </div>
 
@@ -321,16 +323,24 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { Search, X, Layers, Tag, Globe, PackageOpen } from "lucide-vue-next";
+import { useI18n } from "../composables/useI18n";
 import DefaultLayout from "../layouts/DefaultLayout.vue";
 import SVGCard from "../components/SVGCard.vue";
 import ToastNotification from "../components/ToastNotification.vue";
 import { useSvgAssets } from "../composables/useSvgAssets";
 import { useAuth } from "../composables/useAuth";
 import { useScrollRestoration } from "../composables/useScrollRestoration";
+import { useFavorites } from "../composables/useFavorites";
 
-const { assets, loading, fetchAll, toggleFavorite } = useSvgAssets();
+const { assets, loading, fetchAll } = useSvgAssets();
 const { user, refreshSession } = useAuth();
+const { t } = useI18n();
 const { restoreScroll } = useScrollRestoration("home");
+const {
+    isFavorited,
+    fetchFavoriteIds,
+    toggleFavorite: toggleUserFavorite,
+} = useFavorites();
 
 const localSearch = ref("");
 const selectedCategory = ref("");
@@ -407,29 +417,31 @@ const clearAllFilters = () => {
     tagFilter.value = "";
 };
 
-const handleFavorite = async (id: string, current: boolean) => {
+const handleFavorite = async (id: string, _current: boolean) => {
     if (!user.value) {
-        showToast("กรุณาเข้าสู่ระบบก่อนเพิ่มรายการโปรด", "info");
+        showToast(t("home.toast.loginRequired"), "info");
         return;
     }
+    const wasAlreadyFav = isFavorited(id);
     try {
-        await toggleFavorite(id, current);
+        await toggleUserFavorite(user.value.id, id);
         showToast(
-            current ? "ลบออกจากรายการโปรดแล้ว" : "เพิ่มในรายการโปรดแล้ว",
+            wasAlreadyFav
+                ? t("home.toast.favoriteRemoved")
+                : t("home.toast.favoriteAdded"),
             "success",
         );
-        await fetchAll();
     } catch {
-        showToast("เกิดข้อผิดพลาด กรุณาลองใหม่", "error");
+        showToast(t("home.toast.error"), "error");
     }
 };
 
 const handleDownload = () => {
-    showToast("ดาวน์โหลด SVG สำเร็จ", "success");
+    showToast(t("home.toast.downloaded"), "success");
 };
 
 const handleCopy = () => {
-    showToast("คัดลอก SVG Code แล้ว", "success");
+    showToast(t("home.toast.copied"), "success");
 };
 
 // Watch the slot's searchQuery if propagated (also handled locally)
@@ -452,6 +464,9 @@ const handleVisibilityChange = async () => {
     try {
         await refreshSession();
         await fetchAll();
+        if (user.value) {
+            await fetchFavoriteIds(user.value.id);
+        }
     } catch {
         // Swallow errors — the page keeps showing whatever data it already has
     } finally {
@@ -461,6 +476,9 @@ const handleVisibilityChange = async () => {
 
 onMounted(async () => {
     await fetchAll();
+    if (user.value) {
+        await fetchFavoriteIds(user.value.id);
+    }
     restoreScroll();
     document.addEventListener("visibilitychange", handleVisibilityChange);
 });

@@ -3,7 +3,9 @@
         <div class="max-w-5xl mx-auto px-4 py-8">
             <!-- Loading -->
             <div v-if="loading" class="space-y-6">
-                <div class="bg-surface rounded-2xl border border-border p-8 animate-pulse">
+                <div
+                    class="bg-surface rounded-2xl border border-border p-8 animate-pulse"
+                >
                     <div class="flex items-start gap-6">
                         <div class="w-20 h-20 rounded-full bg-soft shrink-0" />
                         <div class="flex-1 space-y-3">
@@ -13,8 +15,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                    <div v-for="i in 8" :key="i" class="bg-surface rounded-2xl border border-border h-48 animate-pulse" />
+                <div
+                    class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
+                >
+                    <div
+                        v-for="i in 8"
+                        :key="i"
+                        class="bg-surface rounded-2xl border border-border h-48 animate-pulse"
+                    />
                 </div>
             </div>
 
@@ -23,58 +31,91 @@
                 v-else-if="!profile"
                 class="flex flex-col items-center justify-center py-24 text-center"
             >
-                <div class="w-16 h-16 rounded-full bg-soft flex items-center justify-center mb-4">
+                <div
+                    class="w-16 h-16 rounded-full bg-soft flex items-center justify-center mb-4"
+                >
                     <UserX :size="28" class="text-textsecondary" />
                 </div>
-                <h2 class="text-xl font-semibold text-textprimary font-prompt mb-2">
-                    ไม่พบผู้ใช้งาน
+                <h2
+                    class="text-xl font-semibold text-textprimary font-prompt mb-2"
+                >
+                    {{ t("profile.notFoundTitle") }}
                 </h2>
                 <p class="text-sm text-textsecondary font-prompt mb-6">
-                    ไม่พบโปรไฟล์สำหรับ @{{ route.params.username }}
+                    {{ t("profile.notFoundDesc") }} @{{ route.params.username }}
                 </p>
                 <RouterLink
                     to="/"
                     class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent text-white text-sm font-prompt font-medium hover:bg-accent/90 transition-all duration-200"
                 >
                     <Home :size="16" />
-                    กลับหน้าแรก
+                    {{ t("profile.backToHome") }}
                 </RouterLink>
             </div>
 
             <!-- Profile Content -->
             <div v-else class="space-y-8">
                 <!-- Profile Card -->
-                <div class="bg-surface rounded-2xl border border-border overflow-hidden shadow-sm">
+                <div
+                    class="bg-surface rounded-2xl border border-border overflow-hidden shadow-sm"
+                >
                     <!-- Cover gradient bar -->
-                    <div class="h-3 bg-gradient-to-r from-accent via-accent/70 to-primary/40" />
+                    <div
+                        class="h-3 bg-gradient-to-r from-accent via-accent/70 to-primary/40"
+                    />
 
                     <div class="p-6 sm:p-8">
-                        <div class="flex flex-col sm:flex-row items-start gap-5">
-                            <!-- Avatar (initial-based) -->
+                        <div
+                            class="flex flex-col sm:flex-row items-start gap-5"
+                        >
+                            <!-- Avatar: SVG or gradient initial -->
                             <div class="shrink-0">
                                 <div
-                                    class="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold text-white shadow-md"
-                                    :style="{ background: avatarGradient }"
+                                    class="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center shadow-md border border-border bg-bg"
                                 >
-                                    {{ avatarInitial }}
+                                    <div
+                                        v-if="profile.avatar_svg"
+                                        class="w-full h-full flex items-center justify-center p-0.5"
+                                        v-html="
+                                            sanitizeAvatarSvg(
+                                                profile.avatar_svg,
+                                            )
+                                        "
+                                    />
+                                    <div
+                                        v-else
+                                        class="w-full h-full flex items-center justify-center text-2xl font-bold text-white"
+                                        :style="{ background: avatarGradient }"
+                                    >
+                                        {{ avatarInitial }}
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- Info -->
                             <div class="flex-1 min-w-0">
-                                <div class="flex flex-wrap items-center gap-2 mb-1">
-                                    <h1 class="text-xl font-semibold text-textprimary font-prompt">
-                                        {{ profile.display_name || profile.username }}
+                                <div
+                                    class="flex flex-wrap items-center gap-2 mb-1"
+                                >
+                                    <h1
+                                        class="text-xl font-semibold text-textprimary font-prompt"
+                                    >
+                                        {{
+                                            profile.display_name ||
+                                            profile.username
+                                        }}
                                     </h1>
                                     <span
                                         v-if="profile.role === 'admin'"
                                         class="inline-flex items-center gap-1 text-xs font-prompt text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200"
                                     >
                                         <ShieldCheck :size="11" />
-                                        Admin
+                                        {{ t("profile.adminBadge") }}
                                     </span>
                                 </div>
-                                <p class="text-sm font-prompt text-textsecondary mb-3">
+                                <p
+                                    class="text-sm font-prompt text-textsecondary mb-3"
+                                >
                                     @{{ profile.username }}
                                 </p>
                                 <p
@@ -95,7 +136,9 @@
                                         class="inline-flex items-center gap-1.5 text-xs font-prompt text-textsecondary hover:text-accent transition-colors duration-150"
                                     >
                                         <Globe :size="13" />
-                                        <span class="truncate max-w-[160px]">{{ displayUrl(profile.website) }}</span>
+                                        <span class="truncate max-w-[160px]">{{
+                                            displayUrl(profile.website)
+                                        }}</span>
                                     </a>
 
                                     <!-- GitHub -->
@@ -153,30 +196,47 @@
                                     class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-border text-sm font-prompt text-textprimary hover:border-accent hover:text-accent transition-all duration-200"
                                 >
                                     <Pencil :size="14" />
-                                    แก้ไขโปรไฟล์
+                                    {{ t("profile.editProfile") }}
                                 </RouterLink>
                             </div>
                         </div>
 
                         <!-- Stats row -->
-                        <div class="flex items-center gap-4 mt-5 pt-5 border-t border-border">
+                        <div
+                            class="flex items-center gap-4 mt-5 pt-5 border-t border-border"
+                        >
                             <div class="text-center">
-                                <p class="text-xl font-bold text-textprimary font-prompt">
+                                <p
+                                    class="text-xl font-bold text-textprimary font-prompt"
+                                >
                                     {{ profileAssets.length }}
                                 </p>
-                                <p class="text-xs text-textsecondary font-prompt">SVG</p>
+                                <p
+                                    class="text-xs text-textsecondary font-prompt"
+                                >
+                                    {{ t("profile.stats.svgs") }}
+                                </p>
                             </div>
                             <div class="w-px h-8 bg-border" />
                             <div class="text-center">
-                                <p class="text-xl font-bold text-textprimary font-prompt">
+                                <p
+                                    class="text-xl font-bold text-textprimary font-prompt"
+                                >
                                     {{ totalViews }}
                                 </p>
-                                <p class="text-xs text-textsecondary font-prompt">Views</p>
+                                <p
+                                    class="text-xs text-textsecondary font-prompt"
+                                >
+                                    {{ t("profile.stats.views") }}
+                                </p>
                             </div>
                             <div class="w-px h-8 bg-border" />
-                            <div class="flex items-center gap-1.5 text-xs text-textsecondary font-prompt">
+                            <div
+                                class="flex items-center gap-1.5 text-xs text-textsecondary font-prompt"
+                            >
                                 <CalendarDays :size="13" />
-                                เข้าร่วม {{ joinedDate }}
+                                {{ t("profile.stats.joinedDate") }}
+                                {{ joinedDate }}
                             </div>
                         </div>
                     </div>
@@ -185,17 +245,25 @@
                 <!-- SVG Gallery Section -->
                 <div>
                     <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-base font-semibold text-textprimary font-prompt flex items-center gap-2">
+                        <h2
+                            class="text-base font-semibold text-textprimary font-prompt flex items-center gap-2"
+                        >
                             <Layers :size="16" class="text-accent" />
-                            SVG ของ {{ profile.display_name || profile.username }}
+                            {{ t("profile.svgCollection") }} —
+                            {{ profile.display_name || profile.username }}
                         </h2>
-                        <span class="text-xs font-prompt text-textsecondary bg-soft px-2.5 py-1 rounded-full">
+                        <span
+                            class="text-xs font-prompt text-textsecondary bg-soft px-2.5 py-1 rounded-full"
+                        >
                             {{ filteredAssets.length }} รายการ
                         </span>
                     </div>
 
                     <!-- Filter bar -->
-                    <div v-if="profileAssets.length > 0" class="flex flex-wrap gap-2 mb-4">
+                    <div
+                        v-if="profileAssets.length > 0"
+                        class="flex flex-wrap gap-2 mb-4"
+                    >
                         <button
                             @click="selectedCategory = ''"
                             :class="[
@@ -205,7 +273,7 @@
                                     : 'bg-soft text-textsecondary hover:bg-accent/10 hover:text-accent',
                             ]"
                         >
-                            ทั้งหมด
+                            {{ t("profile.categories.all") }}
                         </button>
                         <button
                             v-for="cat in uniqueCategories"
@@ -242,18 +310,27 @@
                         v-else-if="!assetsLoading"
                         class="flex flex-col items-center justify-center py-16 text-center"
                     >
-                        <div class="w-12 h-12 rounded-full bg-soft flex items-center justify-center mb-3">
-                            <PackageOpen :size="22" class="text-textsecondary" />
+                        <div
+                            class="w-12 h-12 rounded-full bg-soft flex items-center justify-center mb-3"
+                        >
+                            <PackageOpen
+                                :size="22"
+                                class="text-textsecondary"
+                            />
                         </div>
                         <p class="text-sm font-prompt text-textsecondary">
-                            {{ selectedCategory ? `ไม่มี SVG ในหมวด "${selectedCategory}"` : 'ยังไม่มี SVG ที่อัปโหลด' }}
+                            {{
+                                selectedCategory
+                                    ? `${t("profile.empty.title")} — "${selectedCategory}"`
+                                    : t("profile.empty.description")
+                            }}
                         </p>
                         <button
                             v-if="selectedCategory"
                             @click="selectedCategory = ''"
                             class="mt-3 text-xs font-prompt text-accent hover:underline"
                         >
-                            ล้างตัวกรอง
+                            {{ t("home.empty.clearFilters") }}
                         </button>
                     </div>
                 </div>
@@ -265,6 +342,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useRoute, RouterLink } from "vue-router";
+import { useI18n } from "../composables/useI18n";
 import {
     UserX,
     Home,
@@ -286,7 +364,14 @@ import { useAuth } from "../composables/useAuth";
 
 const route = useRoute();
 const { user } = useAuth();
-const { profile, profileAssets, loading, fetchProfileByUsername, fetchProfileAssets } = useProfile();
+const { t } = useI18n();
+const {
+    profile,
+    profileAssets,
+    loading,
+    fetchProfileByUsername,
+    fetchProfileAssets,
+} = useProfile();
 
 const assetsLoading = ref(false);
 const selectedCategory = ref("");
@@ -322,13 +407,17 @@ const avatarGradient = computed(() => {
 });
 
 const uniqueCategories = computed(() => {
-    const cats = new Set(profileAssets.value.map((a) => a.category).filter(Boolean));
+    const cats = new Set(
+        profileAssets.value.map((a) => a.category).filter(Boolean),
+    );
     return Array.from(cats);
 });
 
 const filteredAssets = computed(() => {
     if (!selectedCategory.value) return profileAssets.value;
-    return profileAssets.value.filter((a) => a.category === selectedCategory.value);
+    return profileAssets.value.filter(
+        (a) => a.category === selectedCategory.value,
+    );
 });
 
 const totalViews = computed(() =>
@@ -366,6 +455,20 @@ const displayUrl = (url: string): string => {
 };
 
 // ── Lifecycle ─────────────────────────────────────────────────────────────
+
+// ── Avatar SVG sanitizer ───────────────────────────────────────────────────
+
+const sanitizeAvatarSvg = (svg: string): string => {
+    const cleaned = svg
+        .replace(/<script[\s\S]*?<\/script>/gi, "")
+        .replace(/on\w+="[^"]*"/gi, "")
+        .replace(/on\w+='[^']*'/gi, "")
+        .replace(/javascript:/gi, "");
+    return cleaned.replace(
+        /<svg/i,
+        '<svg style="width:100%;height:100%;max-width:100%;max-height:100%;"',
+    );
+};
 
 onMounted(async () => {
     const username = route.params.username as string;

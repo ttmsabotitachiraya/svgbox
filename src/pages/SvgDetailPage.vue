@@ -11,7 +11,7 @@
                         :size="16"
                         class="group-hover:-translate-x-0.5 transition-transform duration-200"
                     />
-                    กลับ
+                    {{ t("svgDetail.backBtn") }}
                 </button>
             </div>
 
@@ -44,17 +44,17 @@
                     <FileX :size="36" class="text-textsecondary" />
                 </div>
                 <h2 class="text-xl font-semibold text-primary font-prompt mb-2">
-                    ไม่พบ SVG นี้
+                    {{ t("svgDetail.notFoundTitle") }}
                 </h2>
                 <p class="text-sm text-textsecondary font-prompt mb-6">
-                    อาจถูกลบไปแล้ว หรือ URL ไม่ถูกต้อง
+                    {{ t("svgDetail.notFoundDesc") }}
                 </p>
                 <RouterLink
                     to="/"
                     class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent text-white text-sm font-prompt font-medium hover:bg-accent/90 transition-all duration-200"
                 >
                     <Home :size="16" />
-                    กลับหน้าแรก
+                    {{ t("svgDetail.backToHome") }}
                 </RouterLink>
             </div>
 
@@ -88,7 +88,11 @@
                             class="flex items-center gap-2 text-sm font-prompt text-textsecondary hover:text-primary transition-colors duration-200 w-full bg-surface border border-border rounded-xl px-4 py-2.5 hover:border-accent/60"
                         >
                             <Code :size="15" />
-                            {{ showCode ? "ซ่อน SVG Code" : "ดู SVG Code" }}
+                            {{
+                                showCode
+                                    ? t("svgDetail.hideCode")
+                                    : t("svgDetail.showCode")
+                            }}
                             <ChevronDown
                                 :size="15"
                                 class="ml-auto transition-transform duration-200"
@@ -113,7 +117,11 @@
                                     >
                                         <Check v-if="copied" :size="13" />
                                         <Copy v-else :size="13" />
-                                        {{ copied ? "คัดลอกแล้ว" : "คัดลอก" }}
+                                        {{
+                                            copied
+                                                ? t("svgDetail.copiedCode")
+                                                : t("svgDetail.copyCode")
+                                        }}
                                     </button>
                                 </div>
                                 <pre
@@ -148,7 +156,8 @@
                             class="text-xs font-prompt text-textsecondary flex items-center gap-1.5"
                         >
                             <Calendar :size="12" />
-                            อัปโหลดเมื่อ {{ formatDate(asset.created_at) }}
+                            {{ t("svgDetail.createdAt") }}
+                            {{ formatDate(asset.created_at) }}
                         </p>
                         <!-- Creator Attribution -->
                         <RouterLink
@@ -157,7 +166,7 @@
                             class="mt-2 inline-flex items-center gap-1.5 text-xs font-prompt text-textsecondary hover:text-accent transition-colors duration-150 group/creator"
                         >
                             <User2 :size="13" class="shrink-0" />
-                            <span>สร้างโดย</span>
+                            <span>{{ t("svgDetail.by") }}</span>
                             <span
                                 class="font-medium text-accent group-hover/creator:underline"
                             >
@@ -173,7 +182,8 @@
                             class="mt-2 text-xs font-prompt text-textsecondary flex items-center gap-1.5"
                         >
                             <User2 :size="13" />
-                            สร้างโดย {{ asset.creator.display_name }}
+                            {{ t("svgDetail.by") }}
+                            {{ asset.creator.display_name }}
                         </p>
                     </div>
 
@@ -183,7 +193,7 @@
                             class="text-sm font-medium text-textprimary font-prompt mb-2 flex items-center gap-1.5"
                         >
                             <Tag :size="14" class="text-textsecondary" />
-                            แท็ก
+                            {{ t("svgDetail.tags") }}
                         </p>
                         <div class="flex flex-wrap gap-2">
                             <span
@@ -220,7 +230,7 @@
                                 class="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-accent text-white text-sm font-prompt font-medium hover:bg-accent/90 shadow-sm hover:shadow-md transition-all duration-200"
                             >
                                 <Download :size="16" />
-                                ดาวน์โหลด SVG
+                                {{ t("svgDetail.actions.download") }}
                             </button>
 
                             <!-- Copy SVG Code -->
@@ -235,7 +245,11 @@
                             >
                                 <Check v-if="copied" :size="16" />
                                 <Copy v-else :size="16" />
-                                {{ copied ? "คัดลอกแล้ว!" : "คัดลอก Code" }}
+                                {{
+                                    copied
+                                        ? t("svgDetail.actions.copied")
+                                        : t("svgDetail.actions.copy")
+                                }}
                             </button>
                         </div>
 
@@ -265,8 +279,8 @@
                             />
                             {{
                                 asset.is_favorite
-                                    ? "ลบจากรายการโปรด"
-                                    : "เพิ่มในรายการโปรด"
+                                    ? t("svgDetail.actions.removeFavorite")
+                                    : t("svgDetail.actions.addFavorite")
                             }}
                         </button>
                     </div>
@@ -280,7 +294,8 @@
                             class="text-sm font-medium text-textprimary font-prompt flex items-center gap-1.5"
                         >
                             <Shield :size="14" class="text-textsecondary" />
-                            จัดการ
+                            {{ t("svgDetail.owner.edit") }} /
+                            {{ t("svgDetail.owner.delete") }}
                             <span
                                 v-if="isAdmin && !isOwner"
                                 class="text-xs font-normal text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full"
@@ -299,7 +314,7 @@
                                 class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-soft text-primary text-sm font-prompt font-medium hover:bg-primary hover:text-white transition-all duration-200"
                             >
                                 <Pencil :size="15" />
-                                แก้ไข
+                                {{ t("svgDetail.owner.edit") }}
                             </button>
 
                             <!-- Delete -->
@@ -308,7 +323,7 @@
                                 class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-red-50 text-red-500 text-sm font-prompt font-medium hover:bg-red-500 hover:text-white transition-all duration-200 border border-red-200 hover:border-red-500"
                             >
                                 <Trash2 :size="15" />
-                                ลบ
+                                {{ t("svgDetail.owner.delete") }}
                             </button>
                         </div>
                     </div>
@@ -327,17 +342,17 @@
                             <p
                                 class="text-sm font-medium text-textprimary font-prompt"
                             >
-                                เข้าสู่ระบบเพื่อใช้ฟีเจอร์ครบ
+                                {{ t("svgDetail.loginPrompt.title") }}
                             </p>
                             <p class="text-xs text-textsecondary font-prompt">
-                                บันทึกรายการโปรด และอัปโหลด SVG ของคุณ
+                                {{ t("svgDetail.loginPrompt.description") }}
                             </p>
                         </div>
                         <RouterLink
                             to="/login"
                             class="ml-auto shrink-0 px-3 py-1.5 rounded-xl bg-accent text-white text-xs font-prompt font-medium hover:bg-accent/90 transition-colors"
                         >
-                            เข้าสู่ระบบ
+                            {{ t("svgDetail.loginPrompt.loginBtn") }}
                         </RouterLink>
                     </div>
                 </div>
@@ -370,7 +385,7 @@
                                     <h2
                                         class="text-lg font-semibold text-textprimary font-prompt"
                                     >
-                                        แก้ไข SVG
+                                        {{ t("svgDetail.editModal.title") }}
                                     </h2>
                                 </div>
                                 <button
@@ -390,7 +405,7 @@
                                     <label
                                         class="block text-sm font-medium text-textprimary mb-1.5 font-prompt"
                                     >
-                                        ชื่อ SVG
+                                        {{ t("svgDetail.editModal.nameLabel") }}
                                         <span class="text-red-500">*</span>
                                     </label>
                                     <input
@@ -432,16 +447,16 @@
                                     <label
                                         class="block text-sm font-medium text-textprimary mb-1.5 font-prompt"
                                     >
-                                        แท็ก
-                                        <span
-                                            class="text-xs font-normal text-textsecondary"
-                                            >(คั่นด้วยจุลภาค)</span
-                                        >
+                                        {{ t("svgDetail.editModal.tagsLabel") }}
                                     </label>
                                     <input
                                         v-model="editTagsInput"
                                         type="text"
-                                        placeholder="เช่น icon, nature, flower"
+                                        :placeholder="
+                                            t(
+                                                'svgDetail.editModal.tagsPlaceholder',
+                                            )
+                                        "
                                         class="w-full px-4 py-2.5 bg-bg border border-border rounded-xl text-sm font-prompt text-textprimary placeholder-textsecondary focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-200"
                                         @input="parseEditTags"
                                     />
@@ -470,7 +485,11 @@
                                 <div>
                                     <label
                                         class="block text-sm font-medium text-textprimary mb-1.5 font-prompt"
-                                        >หมวดหมู่</label
+                                        >{{
+                                            t(
+                                                "svgDetail.editModal.categoryLabel",
+                                            )
+                                        }}</label
                                     >
                                     <div class="relative">
                                         <select
@@ -478,7 +497,11 @@
                                             class="w-full px-4 py-2.5 bg-bg border border-border rounded-xl text-sm font-prompt text-textprimary focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 appearance-none transition-all duration-200 pr-10"
                                         >
                                             <option value="">
-                                                -- เลือกหมวดหมู่ --
+                                                {{
+                                                    t(
+                                                        "svgDetail.editModal.categoryDefault",
+                                                    )
+                                                }}
                                             </option>
                                             <option
                                                 v-for="cat in categories"
@@ -516,7 +539,7 @@
                                         @click="closeEditModal"
                                         class="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm font-prompt font-medium text-secondary hover:bg-soft transition-all duration-200"
                                     >
-                                        ยกเลิก
+                                        {{ t("svgDetail.editModal.cancel") }}
                                     </button>
                                     <button
                                         type="submit"
@@ -531,8 +554,10 @@
                                         <Save v-else :size="15" />
                                         {{
                                             isUpdating
-                                                ? "กำลังบันทึก..."
-                                                : "บันทึกการเปลี่ยนแปลง"
+                                                ? t(
+                                                      "svgDetail.editModal.saving",
+                                                  )
+                                                : t("svgDetail.editModal.save")
                                         }}
                                     </button>
                                 </div>
@@ -563,21 +588,22 @@
                                     <h3
                                         class="text-base font-semibold text-textprimary font-prompt"
                                     >
-                                        ยืนยันการลบ
+                                        {{ t("svgDetail.deleteModal.title") }}
                                     </h3>
                                     <p
                                         class="text-xs text-textsecondary font-prompt mt-0.5"
                                     >
-                                        การดำเนินการนี้ไม่สามารถย้อนกลับได้
+                                        {{
+                                            t("svgDetail.deleteModal.subtitle")
+                                        }}
                                     </p>
                                 </div>
                             </div>
 
                             <div class="bg-red-50 rounded-xl p-3 mb-5">
                                 <p class="text-sm font-prompt text-red-700">
-                                    คุณต้องการลบ
-                                    <strong>"{{ asset?.name }}"</strong>
-                                    ใช่หรือไม่?
+                                    {{ t("svgDetail.deleteModal.confirmText") }}
+                                    <strong>"{{ asset?.name }}"</strong>?
                                 </p>
                             </div>
 
@@ -587,7 +613,7 @@
                                     :disabled="isDeleting"
                                     class="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm font-prompt font-medium text-secondary hover:bg-soft transition-all duration-200 disabled:opacity-50"
                                 >
-                                    ยกเลิก
+                                    {{ t("svgDetail.deleteModal.cancel") }}
                                 </button>
                                 <button
                                     @click="handleDelete"
@@ -600,7 +626,13 @@
                                         class="animate-spin"
                                     />
                                     <Trash2 v-else :size="15" />
-                                    {{ isDeleting ? "กำลังลบ..." : "ลบ SVG" }}
+                                    {{
+                                        isDeleting
+                                            ? t(
+                                                  "svgDetail.deleteModal.deleting",
+                                              )
+                                            : t("svgDetail.deleteModal.delete")
+                                    }}
                                 </button>
                             </div>
                         </div>
@@ -622,6 +654,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, onBeforeUnmount } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
+import { useI18n } from "../composables/useI18n";
 import {
     ArrowLeft,
     Download,
@@ -658,6 +691,7 @@ import type { SvgAsset } from "../types";
 
 const route = useRoute();
 const router = useRouter();
+const { t } = useI18n();
 const { user: currentUser, isAdmin } = useAuth();
 const { fetchById, update, remove, toggleFavorite } = useSvgAssets();
 
@@ -754,7 +788,7 @@ const formatDate = (dateStr: string): string => {
 const handleDownload = () => {
     if (!asset.value) return;
     downloadSvg(asset.value.svg_code, asset.value.name);
-    showToast("ดาวน์โหลด SVG สำเร็จ", "success");
+    showToast(t("svgDetail.toast.downloaded"), "success");
 };
 
 const handleCopy = async () => {
@@ -762,12 +796,12 @@ const handleCopy = async () => {
     try {
         await copySvgToClipboard(asset.value.svg_code);
         copied.value = true;
-        showToast("คัดลอก SVG Code แล้ว", "success");
+        showToast(t("svgDetail.toast.copied"), "success");
         setTimeout(() => {
             copied.value = false;
         }, 2500);
     } catch {
-        showToast("ไม่สามารถคัดลอกได้ กรุณาลองใหม่", "error");
+        showToast(t("svgDetail.toast.error"), "error");
     }
 };
 
@@ -779,12 +813,12 @@ const handleFavoriteToggle = async () => {
         asset.value = { ...asset.value, is_favorite: !asset.value.is_favorite };
         showToast(
             asset.value.is_favorite
-                ? "เพิ่มในรายการโปรดแล้ว"
-                : "ลบออกจากรายการโปรดแล้ว",
+                ? t("svgDetail.toast.favoriteAdded")
+                : t("svgDetail.toast.favoriteRemoved"),
             "success",
         );
     } catch {
-        showToast("เกิดข้อผิดพลาด กรุณาลองใหม่", "error");
+        showToast(t("svgDetail.toast.error"), "error");
     } finally {
         favoriteLoading.value = false;
     }
@@ -826,14 +860,14 @@ const handleUpdate = async () => {
     editError.value = "";
 
     if (!editForm.value.name.trim()) {
-        editError.value = "กรุณาระบุชื่อ SVG";
+        editError.value = t("svgDetail.editModal.namePlaceholder");
         return;
     }
     if (
         !editForm.value.svg_code.trim() ||
         !editForm.value.svg_code.includes("<svg")
     ) {
-        editError.value = "SVG Code ไม่ถูกต้อง ต้องมี <svg> tag";
+        editError.value = t("svgDetail.editModal.error");
         return;
     }
 
@@ -854,13 +888,13 @@ const handleUpdate = async () => {
         updated = true;
     } catch (e: unknown) {
         editError.value =
-            e instanceof Error ? e.message : "เกิดข้อผิดพลาด กรุณาลองใหม่";
+            e instanceof Error ? e.message : t("svgDetail.toast.error");
     } finally {
         // First clear updating flag so closeEditModal's guard won't block
         isUpdating.value = false;
         if (updated) {
             closeEditModal();
-            showToast("แก้ไข SVG สำเร็จ!", "success");
+            showToast(t("svgDetail.toast.updated"), "success");
         }
     }
 };
@@ -871,13 +905,13 @@ const handleDelete = async () => {
     try {
         await remove(asset.value.id);
         confirmDeleteOpen.value = false;
-        showToast("ลบ SVG สำเร็จ", "success");
+        showToast(t("svgDetail.toast.deleted"), "success");
         setTimeout(() => {
             router.push({ name: "home" });
         }, 1200);
     } catch (e: unknown) {
         showToast(
-            e instanceof Error ? e.message : "เกิดข้อผิดพลาดขณะลบ",
+            e instanceof Error ? e.message : t("svgDetail.toast.error"),
             "error",
         );
         confirmDeleteOpen.value = false;

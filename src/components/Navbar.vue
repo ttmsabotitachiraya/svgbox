@@ -112,8 +112,20 @@
                     </span>
                 </RouterLink>
 
-                <!-- Right: Auth Actions -->
+                <!-- Right: Actions -->
                 <div class="flex items-center gap-2 shrink-0">
+                    <!-- SVG to PNG button (always visible for all users) -->
+                    <button
+                        @click="svgToPngModalOpen = true"
+                        class="flex items-center gap-1.5 px-3 py-2 rounded-2xl text-sm font-prompt font-medium text-primary hover:bg-soft transition-all duration-200"
+                        :title="t('nav.svgToPngTitle')"
+                    >
+                        <ImageDown :size="16" />
+                        <span class="hidden sm:inline">{{
+                            t("nav.svgToPng")
+                        }}</span>
+                    </button>
+
                     <!-- Authenticated -->
                     <template v-if="user">
                         <RouterLink
@@ -122,7 +134,7 @@
                         >
                             <LayoutDashboard :size="16" />
                             <span class="hidden sm:inline relative">
-                                Collection
+                                {{ t("nav.collection") }}
                                 <span
                                     v-if="currentPage === 'Collection'"
                                     class="absolute left-0 right-0 -bottom-1 h-[1px] bg-primary"
@@ -138,7 +150,7 @@
                             <span
                                 class="hidden sm:inline relative text-purple-600"
                             >
-                                Admin
+                                {{ t("nav.admin") }}
                                 <span
                                     v-if="currentPage === 'Admin'"
                                     class="absolute left-0 right-0 -bottom-1 h-[1px] bg-purple-600"
@@ -197,7 +209,7 @@
                                         <p
                                             class="text-xs font-prompt text-textsecondary"
                                         >
-                                            เข้าสู่ระบบในฐานะ
+                                            {{ t("nav.loggedInAs") }}
                                         </p>
                                         <p
                                             class="text-sm font-prompt font-semibold text-textprimary truncate mt-0.5"
@@ -218,7 +230,7 @@
                                             class="flex items-center gap-2.5 px-4 py-2.5 text-sm font-prompt text-textprimary hover:bg-soft hover:text-accent transition-colors duration-150"
                                         >
                                             <UserCircle2 :size="15" />
-                                            โปรไฟล์ของฉัน
+                                            {{ t("nav.myProfile") }}
                                         </RouterLink>
                                         <RouterLink
                                             to="/settings"
@@ -226,7 +238,7 @@
                                             class="flex items-center gap-2.5 px-4 py-2.5 text-sm font-prompt text-textprimary hover:bg-soft hover:text-accent transition-colors duration-150"
                                         >
                                             <Settings :size="15" />
-                                            ตั้งค่าโปรไฟล์
+                                            {{ t("nav.profileSettings") }}
                                         </RouterLink>
                                     </div>
                                     <div class="border-t border-border py-1">
@@ -236,7 +248,7 @@
                                             class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-prompt text-red-500 hover:bg-red-50 transition-colors duration-150 disabled:opacity-50"
                                         >
                                             <LogOut :size="15" />
-                                            ออกจากระบบ
+                                            {{ t("nav.logout") }}
                                         </button>
                                     </div>
                                 </div>
@@ -259,18 +271,39 @@
                             to="/login"
                             class="px-4 py-2 rounded-2xl text-sm font-prompt font-medium text-primary border border-border hover:border-accent hover:text-accent transition-all duration-200"
                         >
-                            เข้าสู่ระบบ
+                            {{ t("nav.login") }}
                         </RouterLink>
                         <RouterLink
                             to="/register"
                             class="px-4 py-2 rounded-2xl text-sm font-prompt font-medium bg-accent text-white hover:bg-accent/90 shadow-sm hover:shadow-md transition-all duration-200"
                         >
-                            สมัครสมาชิก
+                            {{ t("nav.register") }}
                         </RouterLink>
                     </template>
+
+                    <!-- Language Switcher (moved to the end) - text only -->
+                    <button
+                        @click="toggleLanguage"
+                        :title="
+                            language === 'th'
+                                ? 'Switch to English'
+                                : 'เปลี่ยนเป็นภาษาไทย'
+                        "
+                        :aria-label="
+                            language === 'th'
+                                ? 'Switch to English'
+                                : 'เปลี่ยนเป็นภาษาไทย'
+                        "
+                        class="px-3 py-1 rounded-xl text-sm font-medium text-textsecondary hover:text-accent hover:bg-soft border border-border transition-all duration-200"
+                    >
+                        <span class="text-sm font-medium">{{
+                            language === "th" ? "ไทย" : "EN"
+                        }}</span>
+                    </button>
                 </div>
             </div>
         </div>
+        <SvgToPngModal v-model="svgToPngModalOpen" />
     </nav>
 </template>
 
@@ -284,10 +317,14 @@ import {
     UserCircle2,
     ChevronDown,
     Settings,
+    ImageDown,
 } from "lucide-vue-next";
 import { useAuth } from "../composables/useAuth";
+import { useI18n } from "../composables/useI18n";
+import SvgToPngModal from "../components/SvgToPngModal.vue";
 
 const { user, logout, isAdmin } = useAuth();
+const { language, t, toggleLanguage, setLanguage } = useI18n();
 
 const route = useRoute();
 const currentPage = computed(() => {
@@ -300,6 +337,7 @@ const currentPage = computed(() => {
 
 const loggingOut = ref(false);
 const profileMenuOpen = ref(false);
+const svgToPngModalOpen = ref(false);
 const profileMenuRef = ref<HTMLElement | null>(null);
 
 const handleLogout = async () => {
@@ -323,6 +361,16 @@ const handleOutsideClick = (e: MouseEvent) => {
 };
 
 onMounted(() => {
+    // If the user has not previously chosen a language (no saved preference),
+    // default to English as requested.
+    try {
+        if (!localStorage.getItem("svgbox_lang")) {
+            setLanguage("en");
+        }
+    } catch {
+        // localStorage might be unavailable — ignore and continue
+    }
+
     document.addEventListener("mousedown", handleOutsideClick);
 });
 

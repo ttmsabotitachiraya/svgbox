@@ -28,6 +28,7 @@ export interface Profile {
   id: string;
   username: string | null;
   display_name: string | null;
+  avatar_svg: string | null;
   bio: string | null;
   phone: string | null;
   website: string | null;

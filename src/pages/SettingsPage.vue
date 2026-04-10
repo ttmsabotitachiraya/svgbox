@@ -13,11 +13,11 @@
                     <h1
                         class="text-2xl font-semibold text-textprimary font-prompt"
                     >
-                        ตั้งค่าโปรไฟล์
+                        {{ t("settings.title") }}
                     </h1>
                 </div>
                 <p class="text-sm text-textsecondary font-prompt ml-9">
-                    อัปเดตข้อมูลส่วนตัวและช่องทางการติดต่อ
+                    {{ t("settings.backToCollection") }}
                 </p>
             </div>
 
@@ -39,11 +39,22 @@
                 <div
                     class="bg-surface rounded-2xl border border-border p-6 flex items-center gap-4"
                 >
+                    <!-- Avatar display -->
                     <div
-                        class="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-white shadow-md shrink-0"
-                        :style="{ background: avatarGradient }"
+                        class="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center shadow-md shrink-0 bg-bg border border-border"
                     >
-                        {{ avatarInitial }}
+                        <div
+                            v-if="avatarSvgPreview"
+                            class="w-full h-full flex items-center justify-center p-0.5"
+                            v-html="avatarSvgPreview"
+                        />
+                        <div
+                            v-else
+                            class="w-full h-full flex items-center justify-center text-2xl font-bold text-white"
+                            :style="{ background: avatarGradient }"
+                        >
+                            {{ avatarInitial }}
+                        </div>
                     </div>
                     <div>
                         <p
@@ -61,7 +72,11 @@
                             @{{ form.username || "—" }}
                         </p>
                         <p class="text-xs text-textsecondary font-prompt mt-1">
-                            Avatar สร้างอัตโนมัติจากชื่อของคุณ
+                            {{
+                                avatarSvgPreview
+                                    ? "ใช้รูป SVG"
+                                    : "Avatar สร้างอัตโนมัติจากชื่อ"
+                            }}
                         </p>
                     </div>
                 </div>
@@ -74,7 +89,7 @@
                         class="text-sm font-semibold text-textprimary font-prompt flex items-center gap-2"
                     >
                         <UserCircle2 :size="16" class="text-accent" />
-                        ข้อมูลพื้นฐาน
+                        {{ t("settings.profileSection.title") }}
                     </h2>
 
                     <!-- Display Name -->
@@ -82,12 +97,16 @@
                         <label
                             class="block text-sm font-medium text-textprimary mb-1.5 font-prompt"
                         >
-                            ชื่อที่แสดง
+                            {{ t("settings.profileSection.displayNameLabel") }}
                         </label>
                         <input
                             v-model="form.display_name"
                             type="text"
-                            placeholder="ชื่อที่ต้องการแสดงบนโปรไฟล์"
+                            :placeholder="
+                                t(
+                                    'settings.profileSection.displayNamePlaceholder',
+                                )
+                            "
                             maxlength="60"
                             class="w-full px-4 py-2.5 bg-bg border border-border rounded-xl text-sm font-prompt text-textprimary placeholder-textsecondary focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all duration-200"
                         />
@@ -154,13 +173,14 @@
                             "
                             class="mt-1 text-xs text-accent font-prompt"
                         >
-                            ✓ Username นี้ใช้ได้
+                            ✓
+                            {{ t("settings.profileSection.usernameAvailable") }}
                         </p>
                         <p
                             v-else
                             class="mt-1 text-xs text-textsecondary font-prompt"
                         >
-                            ใช้ได้เฉพาะ a-z, A-Z, 0-9 และ _ (3–30 ตัวอักษร) —
+                            {{ t("settings.profileSection.usernameInvalid") }} —
                             URL: /profile/{{ form.username || "..." }}
                         </p>
                     </div>
@@ -170,15 +190,19 @@
                         <label
                             class="block text-sm font-medium text-textprimary mb-1.5 font-prompt"
                         >
-                            Bio
+                            {{ t("settings.profileSection.bioLabel") }}
                             <span class="text-textsecondary font-normal"
-                                >(ไม่บังคับ)</span
+                                >({{
+                                    t("settings.profileSection.bioOptional")
+                                }})</span
                             >
                         </label>
                         <textarea
                             v-model="form.bio"
                             rows="3"
-                            placeholder="เล่าเกี่ยวกับตัวคุณ เช่น เชี่ยวชาญด้านอะไร งานที่ชอบทำ ฯลฯ"
+                            :placeholder="
+                                t('settings.profileSection.bioPlaceholder')
+                            "
                             maxlength="300"
                             class="w-full px-4 py-2.5 bg-bg border border-border rounded-xl text-sm font-prompt text-textprimary placeholder-textsecondary focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all duration-200 resize-none"
                         />
@@ -190,6 +214,82 @@
                     </div>
                 </div>
 
+                <!-- Avatar SVG -->
+                <div
+                    class="bg-surface rounded-2xl border border-border p-6 space-y-4"
+                >
+                    <h2
+                        class="text-sm font-semibold text-textprimary font-prompt flex items-center gap-2"
+                    >
+                        <ImageIcon :size="16" class="text-accent" />
+                        {{ t("settings.avatarSection.title") }}
+                    </h2>
+                    <p class="text-xs text-textsecondary font-prompt">
+                        {{ t("settings.avatarSection.description") }}
+                    </p>
+                    <!-- Textarea -->
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-textprimary mb-1.5 font-prompt"
+                        >
+                            {{ t("settings.avatarSection.pasteLabel") }}
+                            <span class="text-textsecondary font-normal"
+                                >({{
+                                    t("settings.profileSection.bioOptional")
+                                }})</span
+                            >
+                        </label>
+                        <textarea
+                            v-model="avatarSvgInput"
+                            rows="5"
+                            :placeholder="
+                                t('settings.avatarSection.pastePlaceholder')
+                            "
+                            class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-xs font-mono text-textprimary placeholder-textsecondary focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all duration-200 resize-none"
+                            :class="
+                                avatarSvgError
+                                    ? 'border-red-400'
+                                    : 'border-border'
+                            "
+                            @input="validateAvatarSvg"
+                        />
+                        <p
+                            v-if="avatarSvgError"
+                            class="mt-1 text-xs text-red-500 font-prompt"
+                        >
+                            {{ avatarSvgError }}
+                        </p>
+                        <p
+                            v-else
+                            class="mt-1 text-xs text-textsecondary font-prompt"
+                        >
+                            {{ t("settings.avatarSection.pasteNote") }}
+                        </p>
+                    </div>
+                    <!-- Preview -->
+                    <div
+                        v-if="avatarSvgPreview"
+                        class="flex items-center gap-4"
+                    >
+                        <div
+                            class="w-16 h-16 rounded-full overflow-hidden border border-border bg-bg flex items-center justify-center shrink-0"
+                        >
+                            <div
+                                class="w-full h-full flex items-center justify-center p-0.5"
+                                v-html="avatarSvgPreview"
+                            />
+                        </div>
+                        <div class="text-xs text-textsecondary font-prompt">
+                            <p class="font-medium text-accent">
+                                ✓ {{ t("settings.avatarSection.previewLabel") }}
+                            </p>
+                            <p class="mt-0.5">
+                                {{ t("settings.avatarSection.noPreview") }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Contact Info -->
                 <div
                     class="bg-surface rounded-2xl border border-border p-6 space-y-5"
@@ -198,9 +298,9 @@
                         class="text-sm font-semibold text-textprimary font-prompt flex items-center gap-2"
                     >
                         <ContactRound :size="16" class="text-accent" />
-                        ช่องทางการติดต่อ
+                        {{ t("settings.socialSection.title") }}
                         <span class="text-textsecondary font-normal"
-                            >(ทั้งหมดไม่บังคับ)</span
+                            >({{ t("settings.socialSection.optional") }})</span
                         >
                     </h2>
 
@@ -336,7 +436,7 @@
                             class="text-accent shrink-0 mt-0.5"
                         />
                         <p class="text-sm text-accent font-prompt">
-                            บันทึกข้อมูลสำเร็จแล้ว!
+                            {{ t("settings.success.saved") }}
                         </p>
                     </div>
                 </Transition>
@@ -349,7 +449,7 @@
                         class="flex items-center gap-1.5 text-sm font-prompt text-textsecondary hover:text-accent transition-colors duration-150"
                     >
                         <ExternalLink :size="14" />
-                        ดูโปรไฟล์
+                        {{ t("settings.viewProfile") }}
                     </RouterLink>
                     <div v-else />
 
@@ -367,7 +467,9 @@
                         />
                         <Save v-else :size="15" />
                         {{
-                            isSaving ? "กำลังบันทึก..." : "บันทึกการเปลี่ยนแปลง"
+                            isSaving
+                                ? t("settings.saving")
+                                : t("settings.saveBtn")
                         }}
                     </button>
                 </div>
@@ -377,6 +479,7 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from "../composables/useI18n";
 import { ref, computed, onMounted, watch } from "vue";
 import { RouterLink } from "vue-router";
 import {
@@ -396,11 +499,13 @@ import {
     AlertCircle,
     CheckCircle,
     ExternalLink,
+    ImageIcon,
 } from "lucide-vue-next";
 import DefaultLayout from "../layouts/DefaultLayout.vue";
 import { useAuth } from "../composables/useAuth";
 import { useProfile } from "../composables/useProfile";
 
+const { t } = useI18n();
 const { user, fetchUser } = useAuth();
 const {
     profile,
@@ -427,6 +532,8 @@ const originalUsername = ref("");
 const isSaving = ref(false);
 const saveError = ref("");
 const saveSuccess = ref(false);
+const avatarSvgInput = ref("");
+const avatarSvgError = ref("");
 
 // Username validation state
 const usernameError = ref("");
@@ -458,6 +565,31 @@ const avatarGradient = computed(() => {
         palettes.length;
     return palettes[idx];
 });
+
+const avatarSvgPreview = computed(() => {
+    if (!avatarSvgInput.value.trim()) return "";
+    const cleaned = avatarSvgInput.value
+        .trim()
+        .replace(/<script[\s\S]*?<\/script>/gi, "")
+        .replace(/on\w+="[^"]*"/gi, "")
+        .replace(/on\w+='[^']*'/gi, "")
+        .replace(/javascript:/gi, "");
+    if (!/<svg[\s>]/i.test(cleaned)) return "";
+    return cleaned.replace(
+        /<svg/i,
+        '<svg style="width:100%;height:100%;max-width:100%;max-height:100%;"',
+    );
+});
+
+const validateAvatarSvg = (): boolean => {
+    avatarSvgError.value = "";
+    if (!avatarSvgInput.value.trim()) return true;
+    if (!/<svg[\s>]/i.test(avatarSvgInput.value)) {
+        avatarSvgError.value = "ไม่พบ SVG tag — กรุณาวาง SVG code ที่ถูกต้อง";
+        return false;
+    }
+    return true;
+};
 
 // ── Username validation ───────────────────────────────────────────────────
 
@@ -519,6 +651,7 @@ const handleSave = async () => {
     // Validate username before saving
     await validateUsername();
     if (usernameError.value) return;
+    if (!validateAvatarSvg()) return;
 
     saveError.value = "";
     saveSuccess.value = false;
@@ -536,6 +669,8 @@ const handleSave = async () => {
             instagram:
                 form.value.instagram.trim() || (null as unknown as string),
             phone: form.value.phone.trim() || (null as unknown as string),
+            avatar_svg:
+                avatarSvgInput.value.trim() || (null as unknown as string),
         });
 
         originalUsername.value = form.value.username.trim();
@@ -570,6 +705,7 @@ watch(profile, (p) => {
     form.value.twitter = p.twitter ?? "";
     form.value.instagram = p.instagram ?? "";
     form.value.phone = p.phone ?? "";
+    avatarSvgInput.value = p.avatar_svg ?? "";
     originalUsername.value = p.username ?? "";
     // If username is set, mark it as OK initially
     if (p.username) usernameOk.value = true;

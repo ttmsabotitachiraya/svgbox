@@ -123,10 +123,10 @@
                     <h1
                         class="text-2xl font-semibold text-textprimary font-prompt"
                     >
-                        เข้าสู่ระบบ
+                        {{ t("auth.login.title") }}
                     </h1>
                     <p class="text-sm text-textsecondary font-prompt mt-1">
-                        ยินดีต้อนรับกลับมา! กรุณากรอกข้อมูลของคุณ
+                        {{ t("auth.login.subtitle") }}
                     </p>
                 </div>
 
@@ -136,7 +136,7 @@
                         <label
                             class="block text-sm font-medium text-textprimary mb-1.5 font-prompt"
                         >
-                            อีเมล
+                            {{ t("auth.login.emailLabel") }}
                         </label>
                         <div class="relative">
                             <Mail
@@ -165,7 +165,7 @@
                             <label
                                 class="block text-sm font-medium text-textprimary font-prompt"
                             >
-                                รหัสผ่าน
+                                {{ t("auth.login.passwordLabel") }}
                             </label>
                         </div>
                         <div class="relative">
@@ -225,7 +225,11 @@
                             class="animate-spin"
                         />
                         <LogIn v-else :size="17" />
-                        {{ loading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ" }}
+                        {{
+                            loading
+                                ? t("auth.login.submitting")
+                                : t("auth.login.submitBtn")
+                        }}
                     </button>
                 </form>
 
@@ -237,7 +241,7 @@
                     <div class="relative flex justify-center text-xs">
                         <span
                             class="bg-surface px-3 text-textsecondary font-prompt"
-                            >ยังไม่มีบัญชี?</span
+                            >{{ t("auth.login.noAccount") }}</span
                         >
                     </div>
                 </div>
@@ -248,7 +252,7 @@
                     class="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl border border-border text-sm font-prompt font-medium text-primary hover:border-accent hover:text-accent hover:bg-accent/5 transition-all duration-200"
                 >
                     <UserPlus :size="16" />
-                    สมัครสมาชิกใหม่
+                    {{ t("auth.login.registerLink") }}
                 </RouterLink>
             </div>
 
@@ -259,7 +263,7 @@
                     class="inline-flex items-center gap-1.5 text-sm font-prompt text-textsecondary hover:text-primary transition-colors duration-200"
                 >
                     <ArrowLeft :size="14" />
-                    กลับหน้าแรก
+                    {{ t("auth.login.backToHome") }}
                 </RouterLink>
             </div>
         </div>
@@ -270,6 +274,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { RouterLink } from "vue-router";
+import { useI18n } from "../composables/useI18n";
 import {
     Mail,
     Lock,
@@ -285,6 +290,7 @@ import { useAuth } from "../composables/useAuth";
 
 const router = useRouter();
 const { login, loading } = useAuth();
+const { t } = useI18n();
 
 const email = ref("");
 const password = ref("");
@@ -297,7 +303,7 @@ const handleLogin = async () => {
     fieldError.value = false;
 
     if (!email.value.trim() || !password.value) {
-        errorMessage.value = "กรุณากรอกอีเมลและรหัสผ่าน";
+        errorMessage.value = t("auth.login.errors.emptyFields");
         fieldError.value = true;
         return;
     }
@@ -309,14 +315,14 @@ const handleLogin = async () => {
         fieldError.value = true;
         if (e instanceof Error) {
             if (e.message.includes("Invalid login credentials")) {
-                errorMessage.value = "อีเมลหรือรหัสผ่านไม่ถูกต้อง กรุณาลองใหม่";
+                errorMessage.value = t("auth.login.errors.invalidCreds");
             } else if (e.message.includes("Email not confirmed")) {
-                errorMessage.value = "กรุณายืนยันอีเมลของคุณก่อนเข้าสู่ระบบ";
+                errorMessage.value = t("auth.login.errors.emailNotConfirmed");
             } else {
                 errorMessage.value = e.message;
             }
         } else {
-            errorMessage.value = "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง";
+            errorMessage.value = t("auth.login.errors.generic");
         }
     }
 };

@@ -9,11 +9,11 @@
                     <h1
                         class="text-2xl font-semibold text-textprimary font-prompt"
                     >
-                        สวัสดี,
+                        {{ t("dashboard.title") }}
                         <span class="text-accent">{{ displayName }}</span>
                     </h1>
                     <p class="text-sm text-textsecondary font-prompt mt-1">
-                        จัดการ SVG ของคุณทั้งหมดที่นี่
+                        {{ t("dashboard.titleHighlight") }}
                     </p>
                 </div>
 
@@ -22,7 +22,7 @@
                     class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent text-white text-sm font-prompt font-medium hover:bg-accent/90 shadow-sm hover:shadow-md transition-all duration-200"
                 >
                     <Plus :size="18" />
-                    อัปโหลด SVG ใหม่
+                    {{ t("dashboard.uploadBtn") }}
                 </button>
             </div>
 
@@ -44,7 +44,7 @@
                                 {{ assets.length }}
                             </p>
                             <p class="text-xs text-textsecondary font-prompt">
-                                SVG ทั้งหมด
+                                {{ t("dashboard.stats.mySvgs") }}
                             </p>
                         </div>
                     </div>
@@ -66,7 +66,7 @@
                                 {{ favoriteCount }}
                             </p>
                             <p class="text-xs text-textsecondary font-prompt">
-                                รายการโปรด
+                                {{ t("dashboard.stats.favorites") }}
                             </p>
                         </div>
                     </div>
@@ -88,7 +88,7 @@
                                 {{ uniqueCategories.length }}
                             </p>
                             <p class="text-xs text-textsecondary font-prompt">
-                                หมวดหมู่
+                                {{ t("dashboard.stats.categories") }}
                             </p>
                         </div>
                     </div>
@@ -110,11 +110,45 @@
                                 {{ uniqueTagCount }}
                             </p>
                             <p class="text-xs text-textsecondary font-prompt">
-                                แท็กทั้งหมด
+                                {{ t("dashboard.stats.tags") }}
                             </p>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex gap-2 mb-6">
+                <button
+                    @click="activeTab = 'mine'"
+                    :class="[
+                        'flex items-center gap-1.5 px-5 py-2.5 rounded-2xl text-sm font-prompt font-medium transition-all duration-200',
+                        activeTab === 'mine'
+                            ? 'bg-accent text-white shadow-sm'
+                            : 'bg-surface text-textprimary border border-border hover:border-accent hover:text-accent',
+                    ]"
+                >
+                    <Layers :size="16" />
+                    {{ t("dashboard.tabs.mySvgs") }}
+                    <span class="text-xs opacity-70"
+                        >({{ assets.length }})</span
+                    >
+                </button>
+                <button
+                    @click="activeTab = 'favorites'"
+                    :class="[
+                        'flex items-center gap-1.5 px-5 py-2.5 rounded-2xl text-sm font-prompt font-medium transition-all duration-200',
+                        activeTab === 'favorites'
+                            ? 'bg-accent text-white shadow-sm'
+                            : 'bg-surface text-textprimary border border-border hover:border-accent hover:text-accent',
+                    ]"
+                >
+                    <Heart :size="16" />
+                    {{ t("dashboard.tabs.favorites") }}
+                    <span class="text-xs opacity-70"
+                        >({{ favoriteIds.size }})</span
+                    >
+                </button>
             </div>
 
             <!-- Filter & Search Row -->
@@ -128,7 +162,7 @@
                     <input
                         v-model="searchQuery"
                         type="text"
-                        placeholder="ค้นหา SVG ของคุณ..."
+                        :placeholder="t('dashboard.searchPlaceholder')"
                         class="w-full pl-9 pr-4 py-2.5 bg-surface border border-border rounded-xl text-sm font-prompt text-textprimary placeholder-textsecondary focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-200"
                     />
                 </div>
@@ -139,7 +173,9 @@
                         v-model="selectedCategory"
                         class="pl-4 pr-8 py-2.5 bg-surface border border-border rounded-xl text-sm font-prompt text-textprimary focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 appearance-none transition-all duration-200 min-w-[160px]"
                     >
-                        <option value="">ทุกหมวดหมู่</option>
+                        <option value="">
+                            {{ t("dashboard.categoryAll") }}
+                        </option>
                         <option
                             v-for="cat in allCategories"
                             :key="cat"
@@ -154,16 +190,21 @@
                     />
                 </div>
 
-                <!-- Sort -->
-                <div class="relative">
+                <!-- Sort (mine tab only) -->
+                <div v-if="activeTab === 'mine'" class="relative">
                     <select
                         v-model="sortOrder"
                         class="pl-4 pr-8 py-2.5 bg-surface border border-border rounded-xl text-sm font-prompt text-textprimary focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 appearance-none transition-all duration-200 min-w-[160px]"
                     >
-                        <option value="newest">ใหม่สุด</option>
-                        <option value="oldest">เก่าสุด</option>
-                        <option value="name">ชื่อ (A-Z)</option>
-                        <option value="favorites">รายการโปรด</option>
+                        <option value="newest">
+                            {{ t("dashboard.sort.newest") }}
+                        </option>
+                        <option value="oldest">
+                            {{ t("dashboard.sort.oldest") }}
+                        </option>
+                        <option value="name">
+                            {{ t("dashboard.sort.az") }}
+                        </option>
                     </select>
                     <ChevronDown
                         :size="14"
@@ -174,7 +215,7 @@
 
             <!-- Loading Skeleton -->
             <div
-                v-if="loading"
+                v-if="loading || favLoading"
                 class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
             >
                 <div
@@ -199,7 +240,7 @@
                     <AlertCircle :size="28" class="text-red-400" />
                 </div>
                 <h3 class="text-lg font-semibold text-primary font-prompt mb-1">
-                    เกิดข้อผิดพลาด
+                    {{ t("dashboard.error.title") }}
                 </h3>
                 <p class="text-sm text-textsecondary font-prompt mb-5">
                     {{ error }}
@@ -208,13 +249,13 @@
                     @click="loadAssets()"
                     class="px-5 py-2.5 rounded-2xl bg-accent text-white text-sm font-prompt font-medium hover:bg-accent/90 transition-all duration-200"
                 >
-                    ลองใหม่
+                    {{ t("dashboard.error.retry") }}
                 </button>
             </div>
 
-            <!-- SVG Grid -->
+            <!-- SVG Grid — Mine Tab -->
             <div
-                v-else-if="filteredAssets.length"
+                v-else-if="activeTab === 'mine' && filteredAssets.length"
                 class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
             >
                 <SVGCard
@@ -222,6 +263,26 @@
                     :key="asset.id"
                     :asset="asset"
                     :current-user-id="user?.id"
+                    :user-favorited="isFavorited(asset.id)"
+                    @favorite="handleFavorite"
+                    @download="handleDownload"
+                    @copy="handleCopy"
+                />
+            </div>
+
+            <!-- SVG Grid — Favorites Tab -->
+            <div
+                v-else-if="
+                    activeTab === 'favorites' && filteredFavoriteAssets.length
+                "
+                class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+            >
+                <SVGCard
+                    v-for="asset in filteredFavoriteAssets"
+                    :key="asset.id"
+                    :asset="asset"
+                    :current-user-id="user?.id"
+                    :user-favorited="isFavorited(asset.id)"
                     @favorite="handleFavorite"
                     @download="handleDownload"
                     @copy="handleCopy"
@@ -240,56 +301,42 @@
                 </div>
                 <h3 class="text-xl font-semibold text-primary font-prompt mb-2">
                     {{
-                        sortOrder === "favorites" &&
+                        activeTab === "favorites" &&
                         !(searchQuery || selectedCategory)
-                            ? "ยังไม่มีรายการโปรด"
+                            ? t("dashboard.emptyFavorites.title")
                             : searchQuery || selectedCategory
-                              ? "ไม่พบ SVG ที่ตรงกัน"
-                              : "ยังไม่มี SVG"
+                              ? t("home.empty.title")
+                              : t("dashboard.empty.title")
                     }}
                 </h3>
                 <p class="text-sm text-textsecondary font-prompt max-w-xs mb-6">
                     {{
-                        sortOrder === "favorites" &&
+                        activeTab === "favorites" &&
                         !(searchQuery || selectedCategory)
-                            ? "คุณยังไม่มี SVG ในรายการโปรด — กลับไปที่คอลเลกชันและกดรูปหัวใจที่ SVG เพื่อเพิ่มรายการโปรด"
+                            ? t("dashboard.emptyFavorites.description")
                             : searchQuery || selectedCategory
-                              ? "ลองเปลี่ยนคำค้นหาหรือล้างตัวกรอง"
-                              : "เริ่มต้นด้วยการอัปโหลด SVG แรกของคุณ แล้วจัดระเบียบคอลเลกชันของคุณ"
+                              ? t("home.empty.description")
+                              : t("dashboard.empty.description")
                     }}
                 </p>
                 <button
                     v-if="
+                        activeTab === 'mine' &&
                         !searchQuery &&
-                        !selectedCategory &&
-                        sortOrder !== 'favorites'
+                        !selectedCategory
                     "
                     @click="uploadModalOpen = true"
                     class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-accent text-white text-sm font-prompt font-medium hover:bg-accent/90 shadow-sm hover:shadow-md transition-all duration-200"
                 >
                     <Plus :size="18" />
-                    อัปโหลด SVG แรกของคุณ
+                    {{ t("dashboard.empty.uploadFirst") }}
                 </button>
                 <button
-                    v-else-if="
-                        sortOrder === 'favorites' &&
-                        !searchQuery &&
-                        !selectedCategory
-                    "
-                    @click="sortOrder = 'newest'"
-                    class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-accent text-white text-sm font-prompt font-medium hover:bg-accent/90 shadow-sm hover:shadow-md transition-all duration-200"
-                >
-                    ดูทั้งหมด
-                </button>
-                <button
-                    v-else
-                    @click="
-                        clearFilters();
-                        sortOrder = 'newest';
-                    "
+                    v-else-if="searchQuery || selectedCategory"
+                    @click="clearFilters()"
                     class="px-5 py-2.5 rounded-2xl bg-accent text-white text-sm font-prompt font-medium hover:bg-accent/90 transition-all duration-200"
                 >
-                    ล้างตัวกรอง
+                    {{ t("home.empty.clearFilters") }}
                 </button>
             </div>
         </div>
@@ -314,6 +361,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from "vue";
+import { useI18n } from "../composables/useI18n";
 import {
     Plus,
     Layers,
@@ -332,15 +380,26 @@ import ToastNotification from "../components/ToastNotification.vue";
 import { useAuth } from "../composables/useAuth";
 import { useSvgAssets } from "../composables/useSvgAssets";
 import { useScrollRestoration } from "../composables/useScrollRestoration";
+import { useFavorites } from "../composables/useFavorites";
 
 const { user, refreshSession } = useAuth();
+const { t } = useI18n();
 const { assets, loading, error, fetchByUser, toggleFavorite } = useSvgAssets();
+const {
+    favoriteAssets,
+    favoriteIds,
+    favLoading,
+    fetchFavoriteAssets,
+    isFavorited,
+    toggleFavorite: toggleUserFavorite,
+} = useFavorites();
 const { restoreScroll } = useScrollRestoration("dashboard");
 
 const uploadModalOpen = ref(false);
 const searchQuery = ref("");
 const selectedCategory = ref("");
 const sortOrder = ref("newest");
+const activeTab = ref<"mine" | "favorites">("mine");
 
 const allCategories = ["Illustration", "Icon", "Logo", "Animation", "Other"];
 
@@ -363,9 +422,7 @@ const displayName = computed(() => {
     return "ผู้ใช้";
 });
 
-const favoriteCount = computed(
-    () => assets.value.filter((a) => a.is_favorite).length,
-);
+const favoriteCount = computed(() => favoriteIds.value.size);
 
 const uniqueCategories = computed(() => {
     const cats = new Set(assets.value.map((a) => a.category).filter(Boolean));
@@ -396,36 +453,45 @@ const filteredAssets = computed(() => {
         list = list.filter((a) => a.category === selectedCategory.value);
     }
 
-    // Sort and when "favorites" is selected, show only favorite items
-    if (sortOrder.value === "favorites") {
-        // Filter to favorites only
-        list = list.filter((a) => a.is_favorite);
-        // Keep newest-first ordering by default
-        list.sort(
-            (a, b) =>
-                new Date(b.created_at).getTime() -
-                new Date(a.created_at).getTime(),
+    // Sort
+    switch (sortOrder.value) {
+        case "newest":
+            list.sort(
+                (a, b) =>
+                    new Date(b.created_at).getTime() -
+                    new Date(a.created_at).getTime(),
+            );
+            break;
+        case "oldest":
+            list.sort(
+                (a, b) =>
+                    new Date(a.created_at).getTime() -
+                    new Date(b.created_at).getTime(),
+            );
+            break;
+        case "name":
+            list.sort((a, b) => a.name.localeCompare(b.name, "th"));
+            break;
+    }
+
+    return list;
+});
+
+const filteredFavoriteAssets = computed(() => {
+    let list = [...favoriteAssets.value];
+
+    if (searchQuery.value.trim()) {
+        const q = searchQuery.value.toLowerCase();
+        list = list.filter(
+            (a) =>
+                a.name.toLowerCase().includes(q) ||
+                a.tags?.some((t) => t.toLowerCase().includes(q)) ||
+                a.category?.toLowerCase().includes(q),
         );
-    } else {
-        switch (sortOrder.value) {
-            case "newest":
-                list.sort(
-                    (a, b) =>
-                        new Date(b.created_at).getTime() -
-                        new Date(a.created_at).getTime(),
-                );
-                break;
-            case "oldest":
-                list.sort(
-                    (a, b) =>
-                        new Date(a.created_at).getTime() -
-                        new Date(b.created_at).getTime(),
-                );
-                break;
-            case "name":
-                list.sort((a, b) => a.name.localeCompare(b.name, "th"));
-                break;
-        }
+    }
+
+    if (selectedCategory.value) {
+        list = list.filter((a) => a.category === selectedCategory.value);
     }
 
     return list;
@@ -437,49 +503,69 @@ const clearFilters = () => {
 };
 
 const loadAssets = async (restorePosition = false) => {
-    // Ensure the auth session is refreshed before attempting to load
-    // user-specific assets. This helps when the page is reloaded and the
-    // in-memory `user` may not yet be populated even though a session
-    // exists in storage.
     if (!user.value) {
         try {
             await refreshSession();
         } catch {
-            // Ignore refresh errors here; fetchByUser will simply not run
-            // if the user is not available.
+            // ignore — fetchByUser will simply not run if user is unavailable
         }
     }
 
     if (user.value) {
-        await fetchByUser(user.value.id);
+        await Promise.all([
+            fetchByUser(user.value.id),
+            fetchFavoriteAssets(user.value.id),
+        ]);
         if (restorePosition) restoreScroll();
     }
 };
 
 const handleUploaded = async () => {
-    showToast("อัปโหลด SVG สำเร็จ!", "success");
+    showToast(t("uploadModal.upload") + " ✓", "success");
     await loadAssets();
 };
 
 const handleFavorite = async (id: string, current: boolean) => {
+    if (!user.value) return;
+    const userId = user.value.id;
+    const wasAlreadyFav = isFavorited(id);
     try {
-        await toggleFavorite(id, current);
+        await toggleUserFavorite(userId, id);
+
+        // For own assets in the "mine" tab, also sync the is_favorite field
+        // on the asset row itself (owner-only — RLS enforced on the DB side).
+        if (activeTab.value === "mine") {
+            try {
+                await toggleFavorite(id, current);
+            } catch {
+                // RLS may block if not the owner — ignore silently
+            }
+        }
+
+        if (activeTab.value === "favorites") {
+            // Refresh the favorites list so the removed card disappears
+            await fetchFavoriteAssets(userId);
+        } else {
+            await loadAssets();
+        }
+
         showToast(
-            current ? "ลบออกจากรายการโปรดแล้ว" : "เพิ่มในรายการโปรดแล้ว",
+            wasAlreadyFav
+                ? t("dashboard.toast.favoriteRemoved")
+                : t("dashboard.toast.favoriteAdded"),
             "success",
         );
-        await loadAssets();
     } catch {
-        showToast("เกิดข้อผิดพลาด กรุณาลองใหม่", "error");
+        showToast(t("dashboard.toast.error"), "error");
     }
 };
 
 const handleDownload = () => {
-    showToast("ดาวน์โหลด SVG สำเร็จ", "success");
+    showToast(t("dashboard.toast.downloaded"), "success");
 };
 
 const handleCopy = () => {
-    showToast("คัดลอก SVG Code แล้ว", "success");
+    showToast(t("dashboard.toast.copied"), "success");
 };
 
 // Re-fetch when the user switches back to this tab.

@@ -22,7 +22,7 @@
                             <h2
                                 class="text-lg font-semibold text-textprimary font-prompt"
                             >
-                                อัปโหลด SVG
+                                {{ t("uploadModal.title") }}
                             </h2>
                         </div>
                         <button
@@ -40,12 +40,13 @@
                             <label
                                 class="block text-sm font-medium text-textprimary mb-1.5 font-prompt"
                             >
-                                ชื่อ SVG <span class="text-red-500">*</span>
+                                {{ t("uploadModal.nameLabel") }}
+                                <span class="text-red-500">*</span>
                             </label>
                             <input
                                 v-model="form.name"
                                 type="text"
-                                placeholder="เช่น Beautiful Flower Icon"
+                                :placeholder="t('uploadModal.namePlaceholder')"
                                 class="w-full px-4 py-2.5 bg-bg border rounded-xl text-sm font-prompt text-textprimary placeholder-textsecondary focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all duration-200"
                                 :class="
                                     errors.name
@@ -66,7 +67,8 @@
                             <label
                                 class="block text-sm font-medium text-textprimary mb-1.5 font-prompt"
                             >
-                                SVG Code <span class="text-red-500">*</span>
+                                {{ t("uploadModal.svgCodeLabel") }}
+                                <span class="text-red-500">*</span>
                             </label>
 
                             <!-- Drop Zone -->
@@ -107,12 +109,14 @@
                                     <p
                                         class="text-sm font-medium text-textprimary font-prompt"
                                     >
-                                        ลาก & วาง ไฟล์ .svg ที่นี่
+                                        {{
+                                            t("uploadModal.svgCodePlaceholder")
+                                        }}
                                     </p>
                                     <p
                                         class="text-xs text-textsecondary mt-1 font-prompt"
                                     >
-                                        หรือคลิกเพื่อเลือกไฟล์
+                                        {{ t("uploadModal.namePlaceholder") }}
                                     </p>
                                 </div>
 
@@ -124,8 +128,10 @@
                                         />
                                         <span
                                             class="text-xs text-accent font-prompt font-medium truncate"
-                                            >ไฟล์โหลดแล้ว -
-                                            คลิกเพื่อเปลี่ยน</span
+                                            >{{
+                                                t("uploadModal.upload")
+                                            }}
+                                            ✓</span
                                         >
                                     </div>
                                 </div>
@@ -135,7 +141,7 @@
                             <div class="mt-2">
                                 <label
                                     class="block text-xs text-textsecondary mb-1 font-prompt"
-                                    >หรือวาง SVG Code โดยตรง:</label
+                                    >{{ t("uploadModal.svgCodeLabel") }}:</label
                                 >
                                 <textarea
                                     v-model="form.svg_code"
@@ -167,7 +173,8 @@
                                 <p
                                     class="text-xs font-medium text-textsecondary mb-2 font-prompt flex items-center gap-1.5"
                                 >
-                                    <Eye :size="13" /> ตัวอย่าง
+                                    <Eye :size="13" />
+                                    {{ t("uploadModal.previewLabel") }}
                                 </p>
                                 <div
                                     class="flex items-center justify-center h-32 bg-surface rounded-lg overflow-hidden"
@@ -181,16 +188,12 @@
                             <label
                                 class="block text-sm font-medium text-textprimary mb-1.5 font-prompt"
                             >
-                                แท็ก
-                                <span
-                                    class="text-xs font-normal text-textsecondary"
-                                    >(คั่นด้วยจุลภาค)</span
-                                >
+                                {{ t("uploadModal.tagsLabel") }}
                             </label>
                             <input
                                 v-model="tagsInput"
                                 type="text"
-                                placeholder="เช่น icon, nature, flower"
+                                :placeholder="t('uploadModal.tagsPlaceholder')"
                                 class="w-full px-4 py-2.5 bg-bg border border-border rounded-xl text-sm font-prompt text-textprimary placeholder-textsecondary focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-200"
                                 @input="parseTags"
                             />
@@ -220,7 +223,7 @@
                         <div>
                             <label
                                 class="block text-sm font-medium text-textprimary mb-1.5 font-prompt"
-                                >หมวดหมู่</label
+                                >{{ t("uploadModal.categoryLabel") }}</label
                             >
                             <div class="relative">
                                 <select
@@ -228,7 +231,7 @@
                                     class="w-full px-4 py-2.5 bg-bg border border-border rounded-xl text-sm font-prompt text-textprimary focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 appearance-none transition-all duration-200 pr-10"
                                 >
                                     <option value="">
-                                        -- เลือกหมวดหมู่ --
+                                        {{ t("uploadModal.categoryDefault") }}
                                     </option>
                                     <option
                                         v-for="cat in categories"
@@ -266,7 +269,7 @@
                                 @click="handleClose"
                                 class="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm font-prompt font-medium text-secondary hover:bg-soft transition-all duration-200"
                             >
-                                ยกเลิก
+                                {{ t("uploadModal.cancel") }}
                             </button>
                             <button
                                 type="submit"
@@ -279,7 +282,11 @@
                                     class="animate-spin"
                                 />
                                 <Save v-else :size="16" />
-                                {{ isSubmitting ? "กำลังบันทึก..." : "บันทึก" }}
+                                {{
+                                    isSubmitting
+                                        ? t("uploadModal.saving")
+                                        : t("uploadModal.save")
+                                }}
                             </button>
                         </div>
                     </form>
@@ -290,6 +297,7 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from "../composables/useI18n";
 import { ref, computed, watch } from "vue";
 import {
     Upload,
@@ -315,6 +323,7 @@ const emit = defineEmits<{
     uploaded: [];
 }>();
 
+const { t } = useI18n();
 const { create } = useSvgAssets();
 
 const categories = ["Illustration", "Icon", "Logo", "Animation", "Other"];

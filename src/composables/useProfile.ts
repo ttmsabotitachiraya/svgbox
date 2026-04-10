@@ -90,6 +90,7 @@ export function useProfile() {
         Profile,
         | "username"
         | "display_name"
+        | "avatar_svg"
         | "bio"
         | "phone"
         | "website"
@@ -111,9 +112,7 @@ export function useProfile() {
         err.message?.toLowerCase().includes("duplicate") ||
         err.code === "23505"
       ) {
-        throw new Error(
-          "Username นี้ถูกใช้งานแล้ว กรุณาเลือก Username ใหม่",
-        );
+        throw new Error("Username นี้ถูกใช้งานแล้ว กรุณาเลือก Username ใหม่");
       }
       throw err;
     }

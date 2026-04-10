@@ -13,7 +13,7 @@
                 v-html="scopedSvg"
             />
             <div v-else class="text-textsecondary text-xs font-prompt">
-                No preview
+                {{ t("svgCard.noPreview") }}
             </div>
 
             <!-- Hover Action Overlay -->
@@ -25,27 +25,27 @@
                 <button
                     @click.stop="handleFavorite"
                     :title="
-                        asset.is_favorite
-                            ? 'ลบจากรายการโปรด'
-                            : 'เพิ่มในรายการโปรด'
+                        effectiveFavorite
+                            ? t('svgCard.removeFavorite')
+                            : t('svgCard.addFavorite')
                     "
                     :class="[
                         'p-2 rounded-xl transition-all duration-150 hover:scale-110',
-                        asset.is_favorite
+                        effectiveFavorite
                             ? 'bg-accent text-white'
                             : 'bg-white/20 text-white hover:bg-accent',
                     ]"
                 >
                     <Heart
                         :size="16"
-                        :fill="asset.is_favorite ? 'currentColor' : 'none'"
+                        :fill="effectiveFavorite ? 'currentColor' : 'none'"
                     />
                 </button>
 
                 <!-- Download -->
                 <button
                     @click.stop="handleDownload"
-                    title="ดาวน์โหลด SVG"
+                    :title="t('svgCard.downloadSvg')"
                     class="p-2 rounded-xl bg-white/20 text-white hover:bg-accent transition-all duration-150 hover:scale-110"
                 >
                     <Download :size="16" />
@@ -54,7 +54,7 @@
                 <!-- Copy -->
                 <button
                     @click.stop="handleCopy"
-                    title="คัดลอก SVG Code"
+                    :title="t('svgCard.copySvgCode')"
                     :class="[
                         'p-2 rounded-xl transition-all duration-150 hover:scale-110',
                         copied
@@ -114,7 +114,7 @@
                 :is="'RouterLink'"
                 :to="`/profile/${asset.creator.username}`"
                 class="inline-flex items-center gap-1 text-[11px] font-prompt text-textsecondary hover:text-accent transition-colors duration-150 group/creator"
-                :title="`ดูโปรไฟล์ของ @${asset.creator.username}`"
+                :title="`${t('svgCard.viewProfileOf')} @${asset.creator.username}`"
             >
                 <User2
                     :size="11"
@@ -135,11 +135,13 @@ import {
     downloadSvg,
     copySvgToClipboard,
 } from "../utils/svgUtils";
+import { useI18n } from "../composables/useI18n";
 import type { SvgAsset } from "../types";
 
 const props = defineProps<{
     asset: SvgAsset;
     currentUserId?: string;
+    userFavorited?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -149,7 +151,14 @@ const emit = defineEmits<{
 }>();
 
 const router = useRouter();
+const { t } = useI18n();
 const copied = ref(false);
+
+const effectiveFavorite = computed(() =>
+    props.userFavorited !== undefined
+        ? props.userFavorited
+        : props.asset.is_favorite,
+);
 
 /**
  * Generate a short unique prefix for this card so that SVG element IDs
@@ -231,7 +240,7 @@ const handleCardClick = () => {
 };
 
 const handleFavorite = () => {
-    emit("favorite", props.asset.id, props.asset.is_favorite);
+    emit("favorite", props.asset.id, effectiveFavorite.value);
 };
 
 const handleDownload = () => {

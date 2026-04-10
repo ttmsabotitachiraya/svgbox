@@ -29,8 +29,13 @@ CREATE TABLE IF NOT EXISTS svgbox_profiles (
   id           UUID        PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   username     TEXT        UNIQUE,
   display_name TEXT,
-  avatar_url   TEXT,
+  avatar_svg   TEXT,
   bio          TEXT,
+  phone        TEXT,
+  website      TEXT,
+  twitter      TEXT,
+  instagram    TEXT,
+  github       TEXT,
   role         TEXT        NOT NULL DEFAULT 'user'
                            CONSTRAINT svgbox_profiles_role_check
                              CHECK (role IN ('user', 'admin')),
@@ -42,6 +47,14 @@ CREATE TABLE IF NOT EXISTS svgbox_profiles (
 COMMENT ON TABLE  svgbox_profiles              IS 'SVGBox — ข้อมูลโปรไฟล์ผู้ใช้ (ต่อจาก auth.users)';
 COMMENT ON COLUMN svgbox_profiles.role         IS 'สิทธิ์การใช้งาน: user (ทั่วไป) หรือ admin (ผู้ดูแลระบบ)';
 COMMENT ON COLUMN svgbox_profiles.last_seen_at IS 'เวลาที่ผู้ใช้เข้าสู่ระบบล่าสุด (อัปเดตอัตโนมัติจาก frontend)';
+
+-- ── Add missing columns for existing databases (idempotent) ──
+ALTER TABLE svgbox_profiles ADD COLUMN IF NOT EXISTS avatar_svg   TEXT;
+ALTER TABLE svgbox_profiles ADD COLUMN IF NOT EXISTS phone        TEXT;
+ALTER TABLE svgbox_profiles ADD COLUMN IF NOT EXISTS website      TEXT;
+ALTER TABLE svgbox_profiles ADD COLUMN IF NOT EXISTS twitter      TEXT;
+ALTER TABLE svgbox_profiles ADD COLUMN IF NOT EXISTS instagram    TEXT;
+ALTER TABLE svgbox_profiles ADD COLUMN IF NOT EXISTS github       TEXT;
 
 
 -- ── svgbox_assets ─────────────────────────────────────────────
@@ -401,6 +414,24 @@ AS $$
   LIMIT  p_limit
   OFFSET p_offset;
 $$;
+
+
+-- ── Get favorite asset IDs for a user ─────────────────────────
+--  เรียกจาก frontend ผ่าน supabase.rpc('svgbox_get_favorite_ids')
+
+CREATE OR REPLACE FUNCTION svgbox_get_favorite_ids()
+RETURNS TABLE (asset_id UUID)
+LANGUAGE sql
+STABLE
+SECURITY DEFINER SET search_path = public
+AS $$
+  SELECT asset_id
+  FROM   svgbox_favorites
+  WHERE  user_id = auth.uid();
+$$;
+
+COMMENT ON FUNCTION svgbox_get_favorite_ids IS
+  'คืนรายการ asset_id ที่ user ปัจจุบัน favorite ไว้ทั้งหมด';
 
 
 -- ============================================================

@@ -10,7 +10,7 @@
                         <h1
                             class="text-2xl font-semibold text-purple-700 font-prompt"
                         >
-                            Admin Panel
+                            {{ t('admin.title') }}
                         </h1>
                         <span
                             class="text-xs font-medium bg-purple-600 text-white px-3 py-1 rounded-full"
@@ -18,7 +18,7 @@
                         >
                     </div>
                     <p class="text-sm text-textsecondary font-prompt">
-                        จัดการผู้ใช้และ SVG ทั้งหมดในระบบ
+                        {{ t('admin.subtitle') }}
                     </p>
                 </div>
                 <RouterLink
@@ -26,7 +26,7 @@
                     class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-border text-sm font-prompt font-medium text-secondary hover:bg-soft transition-all duration-200 w-fit"
                 >
                     <LayoutDashboard :size="16" />
-                    กลับ Collection
+                    {{ t('admin.backToCollection') }}
                 </RouterLink>
             </div>
 
@@ -48,7 +48,7 @@
                                 {{ users.length }}
                             </p>
                             <p class="text-xs text-textsecondary font-prompt">
-                                ผู้ใช้ทั้งหมด
+                                {{ t('admin.stats.totalUsers') }}
                             </p>
                         </div>
                     </div>
@@ -69,7 +69,7 @@
                                     {{ adminCount }}
                                 </p>
                                 <p class="text-xs text-purple-600 font-prompt">
-                                    แอดมิน
+                                    {{ t('admin.stats.admins') }}
                                 </p>
                         </div>
                     </div>
@@ -91,7 +91,7 @@
                                 {{ allSvgs.length }}
                             </p>
                             <p class="text-xs text-textsecondary font-prompt">
-                                SVG ทั้งหมด
+                                {{ t('admin.stats.totalSvgs') }}
                             </p>
                         </div>
                     </div>
@@ -113,7 +113,7 @@
                                 {{ activeTodayCount }}
                             </p>
                             <p class="text-xs text-textsecondary font-prompt">
-                                ใช้งานวันนี้
+                                {{ t('admin.stats.activeToday') }}
                             </p>
                         </div>
                     </div>
@@ -134,7 +134,7 @@
                     ]"
                 >
                     <Users :size="15" />
-                    ผู้ใช้งาน
+                    {{ t('admin.tabs.users') }}
                     <span
                         class="text-xs bg-accent/10 text-accent px-1.5 py-0.5 rounded-full"
                         >{{ users.length }}</span
@@ -150,7 +150,7 @@
                     ]"
                 >
                     <Layers :size="15" />
-                    SVG ทั้งหมด
+                    {{ t('admin.tabs.svgs') }}
                     <span
                         class="text-xs bg-accent/10 text-accent px-1.5 py-0.5 rounded-full"
                         >{{ allSvgs.length }}</span
@@ -173,7 +173,7 @@
                         <input
                             v-model="userSearch"
                             type="text"
-                            placeholder="ค้นหาด้วยชื่อหรืออีเมล..."
+                            :placeholder="t('admin.users.searchPlaceholder')"
                             class="w-full pl-9 pr-4 py-2.5 bg-surface border border-border rounded-xl text-sm font-prompt text-textprimary placeholder-textsecondary focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-200"
                         />
                     </div>
@@ -188,7 +188,8 @@
                         ]"
                     >
                         <Clock :size="15" />
-                        ไม่ได้ใช้งาน 30+ วัน
+                        {{ t('admin.users.showInactive') }}
+                        <span class="hidden sm:inline text-xs opacity-70">{{ t('admin.users.showInactiveHint') }}</span>
                         <span
                             v-if="showInactiveOnly"
                             class="text-xs bg-orange-200 text-orange-700 px-1.5 py-0.5 rounded-full"
@@ -205,7 +206,7 @@
                             :size="15"
                             :class="usersLoading ? 'animate-spin' : ''"
                         />
-                        รีเฟรช
+                        {{ t('admin.users.refresh') }}
                     </button>
                 </div>
 
@@ -240,7 +241,7 @@
                     <p
                         class="text-sm font-medium text-primary font-prompt mb-1"
                     >
-                        ไม่สามารถโหลดข้อมูลผู้ใช้ได้
+                        {{ t('admin.users.error') }}
                     </p>
                     <p class="text-xs text-textsecondary font-prompt mb-4">
                         {{ usersError }}
@@ -249,7 +250,7 @@
                         @click="loadUsers"
                         class="px-4 py-2 rounded-xl bg-accent text-white text-sm font-prompt hover:bg-accent/90 transition-colors"
                     >
-                        ลองใหม่
+                        {{ t('admin.users.retry') }}
                     </button>
                 </div>
 
@@ -264,27 +265,27 @@
                                 <th
                                     class="text-left text-xs font-medium text-textsecondary font-prompt px-5 py-3"
                                 >
-                                    ผู้ใช้
+                                    {{ t('admin.users.columns.user') }}
                                 </th>
                                 <th
                                     class="text-left text-xs font-medium text-textsecondary font-prompt px-5 py-3 hidden md:table-cell"
                                 >
-                                    สิทธิ์
+                                    {{ t('admin.users.columns.role') }}
                                 </th>
                                 <th
                                     class="text-left text-xs font-medium text-textsecondary font-prompt px-5 py-3 hidden lg:table-cell"
                                 >
-                                    เข้าใช้งานล่าสุด
+                                    {{ t('admin.users.columns.lastSeen') }}
                                 </th>
                                 <th
                                     class="text-left text-xs font-medium text-textsecondary font-prompt px-5 py-3 hidden lg:table-cell"
                                 >
-                                    สมัครเมื่อ
+                                    {{ t('admin.users.columns.createdAt') }}
                                 </th>
                                 <th
                                     class="text-right text-xs font-medium text-textsecondary font-prompt px-5 py-3"
                                 >
-                                    จัดการ
+                                    {{ t('admin.users.columns.actions') }}
                                 </th>
                             </tr>
                         </thead>
@@ -311,15 +312,23 @@
                                             }}
                                         </div>
                                         <div class="min-w-0">
-                                            <p
-                                                class="text-sm font-medium text-textprimary font-prompt truncate"
+                                            <component
+                                                :is="u.username ? 'RouterLink' : 'span'"
+                                                v-bind="u.username ? { to: `/profile/${u.username}` } : {}"
+                                                :title="u.username ? t('admin.users.viewProfile') : undefined"
+                                                :class="[
+                                                    'text-sm font-medium font-prompt truncate block',
+                                                    u.username
+                                                        ? 'text-accent hover:underline cursor-pointer'
+                                                        : 'text-textprimary'
+                                                ]"
                                             >
                                                 {{
                                                     u.display_name ||
                                                     u.email?.split("@")[0] ||
-                                                    "ไม่ระบุชื่อ"
+                                                    t('admin.users.noName')
                                                 }}
-                                            </p>
+                                            </component>
                                             <p
                                                 class="text-xs text-textsecondary font-prompt truncate"
                                             >
@@ -367,7 +376,7 @@
                                                 ? formatRelativeDate(
                                                       u.last_seen_at,
                                                   )
-                                                : "ยังไม่เคยเข้า"
+                                                : t('admin.users.neverSeen')
                                         }}
                                     </span>
                                 </td>
@@ -398,8 +407,8 @@
                                             "
                                             :title="
                                                 u.role === 'admin'
-                                                    ? 'ลดเป็น User'
-                                                    : 'เลื่อนเป็น Admin'
+                                                    ? t('admin.users.demoteToUser')
+                                                    : t('admin.users.promoteToAdmin')
                                             "
                                             :class="[
                                                 'p-2 rounded-xl text-xs font-prompt transition-all duration-200',
@@ -415,7 +424,7 @@
                                         <button
                                             v-if="u.id !== currentUser?.id"
                                             @click="confirmDeleteUser = u"
-                                            title="ลบผู้ใช้"
+                                            :title="t('admin.users.deleteUser')"
                                             class="p-2 rounded-xl text-textsecondary hover:bg-red-50 hover:text-red-500 transition-all duration-200"
                                         >
                                             <Trash2 :size="15" />
@@ -425,7 +434,7 @@
                                         <span
                                             v-if="u.id === currentUser?.id"
                                             class="text-xs text-textsecondary font-prompt bg-soft px-2 py-1 rounded-lg"
-                                            >คุณ</span
+                                            >{{ t('admin.users.youBadge') }}</span
                                         >
                                     </div>
                                 </td>
@@ -447,10 +456,10 @@
                     <p
                         class="text-base font-semibold text-primary font-prompt mb-1"
                     >
-                        ไม่พบผู้ใช้
+                        {{ t('admin.users.empty.title') }}
                     </p>
                     <p class="text-sm text-textsecondary font-prompt">
-                        ลองเปลี่ยนคำค้นหาหรือล้างตัวกรอง
+                        {{ t('admin.users.empty.description') }}
                     </p>
                 </div>
             </div>
@@ -469,7 +478,7 @@
                         <input
                             v-model="svgSearch"
                             type="text"
-                            placeholder="ค้นหาชื่อ SVG หรือแท็ก..."
+                            :placeholder="t('admin.svgs.searchPlaceholder')"
                             class="w-full pl-9 pr-4 py-2.5 bg-surface border border-border rounded-xl text-sm font-prompt text-textprimary placeholder-textsecondary focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-200"
                         />
                     </div>
@@ -478,7 +487,7 @@
                             v-model="svgCategory"
                             class="pl-4 pr-8 py-2.5 bg-surface border border-border rounded-xl text-sm font-prompt text-textprimary focus:outline-none focus:border-accent appearance-none transition-all duration-200 min-w-[150px]"
                         >
-                            <option value="">ทุกหมวดหมู่</option>
+                            <option value="">{{ t('admin.svgs.categoryAll') }}</option>
                             <option
                                 v-for="cat in categories"
                                 :key="cat"
@@ -501,7 +510,7 @@
                             :size="15"
                             :class="svgsLoading ? 'animate-spin' : ''"
                         />
-                        รีเฟรช
+                        {{ t('admin.svgs.refresh') }}
                     </button>
                 </div>
 
@@ -544,7 +553,7 @@
                                 v-else
                                 class="text-textsecondary text-xs font-prompt"
                             >
-                                No preview
+                                {{ t('admin.svgs.noPreview') }}
                             </div>
 
                             <!-- Overlay actions -->
@@ -554,14 +563,14 @@
                             >
                                 <RouterLink
                                     :to="`/svg/${svg.id}`"
-                                    title="ดู / แก้ไข"
+                                    :title="t('admin.svgs.viewEdit')"
                                     class="p-2 rounded-xl bg-white/20 text-white hover:bg-accent transition-all duration-150 hover:scale-110"
                                 >
                                     <ExternalLink :size="15" />
                                 </RouterLink>
                                 <button
                                     @click="confirmDeleteSvg = svg"
-                                    title="ลบ SVG"
+                                    :title="t('admin.svgs.deleteSvg')"
                                     class="p-2 rounded-xl bg-white/20 text-white hover:bg-red-500 transition-all duration-150 hover:scale-110"
                                 >
                                     <Trash2 :size="15" />
@@ -581,6 +590,7 @@
                             <User
                                 :size="11"
                                 class="text-textsecondary shrink-0"
+                                :title="t('admin.svgs.owner')"
                             />
                             <span
                                 class="text-xs text-textsecondary font-prompt truncate"
@@ -615,10 +625,10 @@
                     <p
                         class="text-base font-semibold text-primary font-prompt mb-1"
                     >
-                        ไม่พบ SVG
+                        {{ t('admin.svgs.empty.title') }}
                     </p>
                     <p class="text-sm text-textsecondary font-prompt">
-                        ลองเปลี่ยนคำค้นหาหรือหมวดหมู่
+                        {{ t('admin.svgs.empty.description') }}
                     </p>
                 </div>
             </div>
@@ -647,27 +657,26 @@
                                 <h3
                                     class="text-base font-semibold text-textprimary font-prompt"
                                 >
-                                    ยืนยันการลบผู้ใช้
+                                    {{ t('admin.deleteUserModal.title') }}
                                 </h3>
                                 <p
                                     class="text-xs text-textsecondary font-prompt mt-0.5"
                                 >
-                                    การดำเนินการนี้ไม่สามารถย้อนกลับได้
+                                    {{ t('admin.deleteUserModal.subtitle') }}
                                 </p>
                             </div>
                         </div>
 
                         <div class="bg-red-50 rounded-xl p-3 mb-3 space-y-1">
                             <p class="text-sm font-prompt text-red-700">
-                                ลบ
+                                {{ t('admin.deleteUserModal.confirmText') }}
                                 <strong>{{
                                     confirmDeleteUser.display_name ||
                                     confirmDeleteUser.email
-                                }}</strong>
-                                ออกจากระบบ?
+                                }}</strong>?
                             </p>
                             <p class="text-xs font-prompt text-red-500">
-                                SVG และข้อมูลทั้งหมดของผู้ใช้จะถูกลบด้วย
+                                {{ t('admin.deleteUserModal.warningText') }}
                             </p>
                         </div>
 
@@ -680,9 +689,8 @@
                                 class="text-blue-500 mt-0.5 shrink-0"
                             />
                             <p class="text-xs font-prompt text-blue-700">
-                                หลังจากลบแล้ว อีเมล
-                                <strong>{{ confirmDeleteUser.email }}</strong>
-                                สามารถใช้สมัครสมาชิกใหม่ได้อีกครั้ง
+                                <strong>{{ t('admin.deleteUserModal.warningTitle') }}:</strong>
+                                {{ t('admin.deleteUserModal.warningText') }}
                             </p>
                         </div>
 
@@ -692,7 +700,7 @@
                                 :disabled="isDeleting"
                                 class="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm font-prompt font-medium text-secondary hover:bg-soft transition-all duration-200 disabled:opacity-50"
                             >
-                                ยกเลิก
+                                {{ t('admin.deleteUserModal.cancel') }}
                             </button>
                             <button
                                 @click="handleDeleteUser"
@@ -705,7 +713,7 @@
                                     class="animate-spin"
                                 />
                                 <Trash2 v-else :size="15" />
-                                {{ isDeleting ? "กำลังลบ..." : "ลบผู้ใช้" }}
+                                {{ isDeleting ? t('admin.deleteUserModal.deleting') : t('admin.deleteUserModal.confirm') }}
                             </button>
                         </div>
                     </div>
@@ -739,7 +747,7 @@
                                 <h3
                                     class="text-base font-semibold text-textprimary font-prompt"
                                 >
-                                    เปลี่ยนสิทธิ์ผู้ใช้
+                                    {{ t('admin.changeRoleModal.title') }}
                                 </h3>
                                 <p
                                     class="text-xs text-textsecondary font-prompt mt-0.5"
@@ -755,7 +763,6 @@
                         <div
                             class="bg-soft rounded-xl p-3 mb-5 text-sm font-prompt text-textprimary"
                         >
-                            เปลี่ยนจาก
                             <span
                                 :class="
                                     confirmRoleChange.role === 'admin'
@@ -765,11 +772,11 @@
                             >
                                 {{
                                     confirmRoleChange.role === "admin"
-                                        ? "Admin"
-                                        : "User"
+                                        ? t('admin.changeRoleModal.roleAdmin')
+                                        : t('admin.changeRoleModal.roleUser')
                                 }}
                             </span>
-                            เป็น
+                            →
                             <span
                                 :class="
                                     newRoleTarget === 'admin'
@@ -778,7 +785,9 @@
                                 "
                             >
                                 {{
-                                    newRoleTarget === "admin" ? "Admin" : "User"
+                                    newRoleTarget === "admin"
+                                        ? t('admin.changeRoleModal.roleAdmin')
+                                        : t('admin.changeRoleModal.roleUser')
                                 }}
                             </span>
                             ?
@@ -790,7 +799,7 @@
                                 :disabled="isChangingRole"
                                 class="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm font-prompt font-medium text-secondary hover:bg-soft transition-all duration-200 disabled:opacity-50"
                             >
-                                ยกเลิก
+                                {{ t('admin.changeRoleModal.cancel') }}
                             </button>
                             <button
                                 @click="handleChangeRole"
@@ -804,7 +813,7 @@
                                 />
                                 <ShieldCheck v-else :size="15" />
                                 {{
-                                    isChangingRole ? "กำลังบันทึก..." : "ยืนยัน"
+                                    isChangingRole ? t('admin.changeRoleModal.changing') : t('admin.changeRoleModal.confirm')
                                 }}
                             </button>
                         </div>
@@ -836,18 +845,17 @@
                                 <h3
                                     class="text-base font-semibold text-textprimary"
                                 >
-                                    ยืนยันการลบ SVG
+                                    {{ t('admin.deleteSvgModal.title') }}
                                 </h3>
                                 <p class="text-xs text-textsecondary mt-0.5">
-                                    การดำเนินการนี้ไม่สามารถย้อนกลับได้
+                                    {{ t('admin.deleteSvgModal.subtitle') }}
                                 </p>
                             </div>
                         </div>
                         <div class="bg-red-50 rounded-xl p-3 mb-5">
                             <p class="text-sm font-prompt text-red-700">
-                                ลบ
-                                <strong>"{{ confirmDeleteSvg.name }}"</strong>
-                                ใช่หรือไม่?
+                                {{ t('admin.deleteSvgModal.confirmText') }}
+                                <strong>"{{ confirmDeleteSvg.name }}"</strong>?
                             </p>
                         </div>
                         <div class="flex gap-3">
@@ -856,7 +864,7 @@
                                 :disabled="isDeletingSvg"
                                 class="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm font-prompt font-medium text-secondary hover:bg-soft transition-all duration-200 disabled:opacity-50"
                             >
-                                ยกเลิก
+                                {{ t('admin.deleteSvgModal.cancel') }}
                             </button>
                             <button
                                 @click="handleDeleteSvg"
@@ -869,7 +877,7 @@
                                     class="animate-spin"
                                 />
                                 <Trash2 v-else :size="15" />
-                                {{ isDeletingSvg ? "กำลังลบ..." : "ลบ SVG" }}
+                                {{ isDeletingSvg ? t('admin.deleteSvgModal.deleting') : t('admin.deleteSvgModal.confirm') }}
                             </button>
                         </div>
                     </div>
@@ -914,6 +922,7 @@ import { supabase } from "../services/supabase";
 import { useAuth } from "../composables/useAuth";
 import { useSvgAssets } from "../composables/useSvgAssets";
 import { sanitizeSvg } from "../utils/svgUtils";
+import { useI18n } from "../composables/useI18n";
 import type { SvgAsset } from "../types";
 
 // ── Types ────────────────────────────────────────────────────
@@ -926,6 +935,9 @@ interface AdminUser {
     last_seen_at: string | null;
     created_at: string;
 }
+
+// ── i18n ──────────────────────────────────────────────────────
+const { t } = useI18n();
 
 // ── Auth ─────────────────────────────────────────────────────
 const { user: currentUser, refreshSession } = useAuth();
@@ -1093,10 +1105,40 @@ const isInactive = (lastSeen: string | null): boolean => {
 };
 
 /** Produce a namespaced SVG for the mini-card preview */
+/**
+ * Rewrite every `id="…"` definition and every `url(#…)` / `href="#…"` /
+ * `xlink:href="#…"` reference inside the SVG so they are namespaced with a
+ * per-card prefix.  This prevents gradient/filter/clip collisions when many
+ * cards are visible at the same time (same bug fix as SVGCard.vue).
+ */
+function scopeSvgIds(svg: string, prefix: string): string {
+    const idRegex = /\bid="([^"]+)"/g;
+    const ids: string[] = [];
+    let m: RegExpExecArray | null;
+    while ((m = idRegex.exec(svg)) !== null) {
+        ids.push(m[1]);
+    }
+    if (ids.length === 0) return svg;
+
+    const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    let result = svg;
+    for (const id of ids) {
+        const escapedId = escape(id);
+        const newId = `${prefix}${id}`;
+        result = result.replace(new RegExp(`\\bid="${escapedId}"`, "g"), `id="${newId}"`);
+        result = result.replace(new RegExp(`url\\(#${escapedId}\\)`, "g"), `url(#${newId})`);
+        result = result.replace(new RegExp(`href="#${escapedId}"`, "g"), `href="#${newId}"`);
+        result = result.replace(new RegExp(`xlink:href="#${escapedId}"`, "g"), `xlink:href="#${newId}"`);
+    }
+    return result;
+}
+
 const getScopedSvg = (svg: SvgAsset): string => {
     if (!svg.svg_code) return "";
     const cleaned = sanitizeSvg(svg.svg_code);
-    return cleaned.replace(
+    const prefix = `adm-${svg.id}-`;
+    const scoped = scopeSvgIds(cleaned, prefix);
+    return scoped.replace(
         /<svg/i,
         '<svg style="max-width:100%;max-height:100%;width:auto;height:auto;"',
     );
@@ -1132,7 +1174,7 @@ const handleDeleteUser = async () => {
         });
         if (error) throw error;
         showToast(
-            `ลบ ${confirmDeleteUser.value.display_name || confirmDeleteUser.value.email} สำเร็จ`,
+            `${t('admin.deleteUserModal.confirm')} ${confirmDeleteUser.value.display_name || confirmDeleteUser.value.email} ✓`,
             "success",
         );
         confirmDeleteUser.value = null;
@@ -1140,7 +1182,7 @@ const handleDeleteUser = async () => {
         await loadSvgs(); // refresh svg count
     } catch (e: unknown) {
         showToast(
-            e instanceof Error ? e.message : "เกิดข้อผิดพลาดขณะลบผู้ใช้",
+            e instanceof Error ? e.message : t('admin.toast.error'),
             "error",
         );
     } finally {
@@ -1162,14 +1204,11 @@ const handleChangeRole = async () => {
         const u = users.value.find((u) => u.id === confirmRoleChange.value!.id);
         if (u) u.role = newRoleTarget.value;
 
-        showToast(
-            `เปลี่ยนสิทธิ์ ${confirmRoleChange.value.display_name || confirmRoleChange.value.email} เป็น ${newRoleTarget.value === "admin" ? "Admin" : "User"} สำเร็จ`,
-            "success",
-        );
+        showToast(t('admin.toast.roleChanged'), "success");
         confirmRoleChange.value = null;
     } catch (e: unknown) {
         showToast(
-            e instanceof Error ? e.message : "เกิดข้อผิดพลาดขณะเปลี่ยนสิทธิ์",
+            e instanceof Error ? e.message : t('admin.toast.error'),
             "error",
         );
     } finally {
@@ -1183,12 +1222,12 @@ const handleDeleteSvg = async () => {
     isDeletingSvg.value = true;
     try {
         await removeSvg(confirmDeleteSvg.value.id);
-        showToast(`ลบ "${confirmDeleteSvg.value.name}" สำเร็จ`, "success");
+        showToast(t('admin.toast.svgDeleted'), "success");
         confirmDeleteSvg.value = null;
         await loadSvgs();
     } catch (e: unknown) {
         showToast(
-            e instanceof Error ? e.message : "เกิดข้อผิดพลาดขณะลบ SVG",
+            e instanceof Error ? e.message : t('admin.toast.error'),
             "error",
         );
     } finally {
